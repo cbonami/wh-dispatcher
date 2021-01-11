@@ -11,11 +11,11 @@ public interface ApplicationRepository extends CrudRepository<Application, Long>
     //@Modifying
     @Transactional
     //@Query("update Application d set d.online = true where d.id = :id")
-    int setDestinationOnline(@Param("id") Long id);
+    int setDestinationOnline(@Param("id") String id);
 
     //@Modifying
     @Transactional
     //@Query("update Application d set d.online = false where d.id = :id")
-    int setDestinationOffline(@Param("id") Long id);
+    int setDestinationOffline(@Param("id") String id);
 
 }

@@ -1,0 +1,15 @@
+// create a new destination (=application)
+POST http://localhost:8080/applications HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+url=http%3A%2F%2Fptsv2.com%2Fpost.php%3Fdir%3Dwebok&name=test%20app
+###
+
+// list all applications
+GET http://localhost:8080/applications
+###
+
+POST http://localhost:8080/applications/1/message
+Content-type: text/plain
+
+WEBHOOK-TEST

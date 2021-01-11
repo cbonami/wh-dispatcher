@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.util.List;
 
@@ -14,15 +17,19 @@ import java.util.List;
 @Builder
 public class Application {
 
-    private Long id;
+    @Id
+    private String id;
 
     private String url;
 
+    @Indexed
     private String name;
 
     @JsonIgnore
+    @Reference
     private List<Message> messages;
 
+    @Indexed
     private Boolean online;
 
     protected Application() {

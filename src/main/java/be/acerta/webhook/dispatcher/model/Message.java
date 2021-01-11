@@ -1,6 +1,8 @@
 package be.acerta.webhook.dispatcher.model;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
@@ -12,7 +14,8 @@ public class Message implements Serializable {
 
     static final long MESSAGE_TIMEOUT = 24 * 60 * 60 * 1000;
 
-    private Long id;
+    @Id
+    private String id;
 
     private String messageBody;
 
@@ -20,6 +23,7 @@ public class Message implements Serializable {
 
     private Timestamp timestamp;
 
+    @Reference
     private Application application;
 
     protected Message() {
@@ -34,7 +38,7 @@ public class Message implements Serializable {
     }
 
 
-    public Long getDestinationId() {
+    public String getDestinationId() {
         return application.getId();
     }
 

@@ -13,7 +13,6 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class RestExceptionHandler {
 
-
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
     public String handleNoSuchElementException(HttpServletRequest request, Exception ex) {

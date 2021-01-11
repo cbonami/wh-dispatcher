@@ -34,7 +34,7 @@ public class WebhookController implements ApplicationEventPublisherAware {
      */
     @PostMapping
     //@ApiOperation(value = "Register new application")
-    public Long registerNewApplication(@RequestParam(required = true) String url, @RequestParam(required = true) String name) {
+    public String registerNewApplication(@RequestParam(required = true) String url, @RequestParam(required = true) String name) {
 
         Application applicationRequest = Application.builder().name(name).url(url).online(true).build();
         Application application = applicationRepository.save(applicationRequest);
@@ -62,9 +62,7 @@ public class WebhookController implements ApplicationEventPublisherAware {
     @DeleteMapping("/{id}")
     public void deleteApplication(@PathVariable("id") Long id) {
         Application application = getApplication(id);
-
         applicationRepository.delete(application);
-
         log.debug("Deleted Application {}", application.getUrl());
     }
 
