@@ -6,14 +6,12 @@ import be.acerta.webhook.dispatcher.model.Message;
 import be.acerta.webhook.dispatcher.persistence.ApplicationRepository;
 import be.acerta.webhook.dispatcher.persistence.MessageRepository;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
-
 
 @RestController
 @RequestMapping("/applications")
