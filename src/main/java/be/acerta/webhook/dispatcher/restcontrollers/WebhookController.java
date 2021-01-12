@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/applications")
@@ -43,13 +44,12 @@ public class WebhookController implements ApplicationEventPublisherAware {
     }
 
     /**
-     * List registered appliction [{id, URL},...]
+     * List registered applications [{id, URL},...]
      */
     //@ApiOperation(value = "List applications")
     @GetMapping
     public Iterable<Application> listApplications() {
         log.debug("Listing applications");
-
         return applicationRepository.findAll();
     }
 
@@ -58,7 +58,7 @@ public class WebhookController implements ApplicationEventPublisherAware {
      */
     //@ApiOperation(value = "Delete application by id")
     @DeleteMapping("/{id}")
-    public void deleteApplication(@PathVariable("id") Long id) {
+    public void deleteApplication(@PathVariable("id") String id) {
         Application application = getApplication(id);
         applicationRepository.delete(application);
         log.debug("Deleted Application {}", application.getUrl());
@@ -69,7 +69,7 @@ public class WebhookController implements ApplicationEventPublisherAware {
      */
     //@ApiOperation(value = "Post message to application")
     @PostMapping("/{id}/message")
-    public void postMessageToApplication(@PathVariable("id") Long id,
+    public void postMessageToApplication(@PathVariable("id") String id,
                                          @RequestBody String body,
                                          @RequestHeader("Content-Type") String contentType) {
         validateParam(body, "body");
@@ -90,12 +90,12 @@ public class WebhookController implements ApplicationEventPublisherAware {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    private Application getApplication(Long id) throws NoSuchElementException {
-        Application application = applicationRepository.findById(id).get();
-        if (application == null) {
+    private Application getApplication(String id) throws NoSuchElementException {
+        Optional<Application> application = applicationRepository.findById(id);
+        if (application.isEmpty()) {
             throw new NoSuchElementException("Does not exist application with ID " + id);
         }
-        return application;
+        return application.get();
     }
 
     private void validateParam(String param, String paramName) throws IllegalArgumentException {

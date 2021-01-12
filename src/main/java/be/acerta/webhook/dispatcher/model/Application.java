@@ -25,12 +25,12 @@ public class Application {
     @Indexed
     private String name;
 
-    @JsonIgnore
-    @Reference
-    private List<Message> messages;
-
     @Indexed
     private Boolean online;
+
+    public void setOffline(Boolean offline) {
+        this.online = false;
+    }
 
     protected Application() {
     }

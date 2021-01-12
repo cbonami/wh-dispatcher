@@ -6,16 +6,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 
-public interface ApplicationRepository extends CrudRepository<Application, Long> {
+public interface ApplicationRepository extends CrudRepository<Application, String> {
 
     //@Modifying
-    @Transactional
+    //@Transactional
     //@Query("update Application d set d.online = true where d.id = :id")
-    int setDestinationOnline(@Param("id") String id);
+    //int setOnline(@Param("id") String id);
 
     //@Modifying
-    @Transactional
+    //@Transactional
     //@Query("update Application d set d.online = false where d.id = :id")
-    int setDestinationOffline(@Param("id") String id);
+    //int setOffline(@Param("id") String id);
 
 }

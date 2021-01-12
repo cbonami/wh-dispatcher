@@ -50,7 +50,6 @@ public class Message implements Serializable {
         return timestamp.getTime() < System.currentTimeMillis() - MESSAGE_TIMEOUT;
     }
 
-
     @Override
     public String toString() {
         return String.format("Message[id=%d, messageBody='%s', contentType='%s']", id, messageBody, contentType);

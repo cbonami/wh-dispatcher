@@ -64,7 +64,7 @@ public class MessageProcessor {
         try {
             log.debug("Processing messages for Application {}", destination.getUrl());
 
-            destinationRepository.setDestinationOnline(destination.getId());
+            //destinationRepository.setOnline(destination.getId());
 
             List<Message> messages = messageRepository.findAllByApplicationOrderByIdAsc(destination);
             for (Message message : messages) {
@@ -111,7 +111,7 @@ public class MessageProcessor {
 
     private void onSendMessageError(Message message) {
         log.debug("Unsent Message {}", message.getId());
-        destinationRepository.setDestinationOffline(message.getDestinationId());
+        //destinationRepository.setOffline(message.getDestinationId());
     }
 
     private void deleteMessage(Message message) {
