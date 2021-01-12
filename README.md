@@ -13,23 +13,23 @@ By default, Redis runs on port 6379.
 
 > fyi, I am using a docker host running in Ubuntu 20.04 in Linux subsystem (WSL2) for Windows 10
 
-```bash
-docker run --name redis -e ALLOW_EMPTY_PASSWORD=yes bitnami/redis:latest
-```
+We'll start a redis container and use [port forwarding](https://ibmimedia.com/blog/258/how-to-use-netsh-to-configure-port-forwarding-on-windows) to connect to the docker container.
 
-Use [port forwarding](https://ibmimedia.com/blog/258/how-to-use-netsh-to-configure-port-forwarding-on-windows) to connect to the docker container.
-Run elevated Powershell:
+Run Powershell in Admin mode (or use [sudo for windows](http://blog.lukesampson.com/sudo-for-windows)):
 
 ```shell
+docker run --name redis -e ALLOW_EMPTY_PASSWORD=yes bitnami/redis:latest
+
 # Delete any existing port 6379 forwarding
-netsh interface portproxy delete v4tov4 listenport="6379" 
+sudo netsh interface portproxy delete v4tov4 listenport="6379" 
 
 # Get the private IP of the WSL2 instance
-$wslIp=(wsl -d Ubuntu -e sh -c "ip addr show eth0 | grep 'inet\b' | awk '{print `$2}' | cut -d/ -f1") 
+$wslIp=(wsl -d Ubuntu-20.04 -e sh -c "ip addr show eth0 | grep 'inet\b' | awk '{print `$2}' | cut -d/ -f1") 
 
-# Forward port
+# Forward host port
 # note: listenport is the local port 
-netsh interface portproxy add v4tov4 listenport="6379" connectaddress="$wslIp" connectport="6379"
+sudo netsh interface portproxy add v4tov4 listenport="6379" connectaddress="$wslIp" connectport="6379"
+sudo netsh interface portproxy add v4tov4 listenport="6380" connectaddress="$wslIp" connectport="6379"
 ```
 
 #### Option: Redis on Windows
@@ -42,7 +42,7 @@ API description becomes available at [http://localhost:8080/v3/api-docs/](http:/
 
 ## Use app
 
-See [here](src/test/resources/test.http)
+Perform [some API requests](src/test/resources/test.http)
 
 Note: the registration service has been developed so that you can register using a simple registration form.
 
@@ -80,3 +80,11 @@ redis-cli keys *
 * https://redis.io/topics/indexes
 * https://github.com/spring-projects/spring-data-examples/tree/master/redis/repositories
 * https://github.com/spring-projects/spring-data-redis/blob/master/src/main/asciidoc/reference/query-by-example.adoc
+* https://stackoverflow.com/questions/45419196/query-nested-objects-in-redis-using-spring-data
+* https://grokonez.com/spring-framework/spring-boot/spring-data-redis-messaging-pubsub-spring-boot-spring-data-redis-example
+* [sudo for windows](http://blog.lukesampson.com/sudo-for-windows)
+* https://github.com/docker/for-win/issues/6610
+* https://code.visualstudio.com/docs/remote/containers#_quick-start-try-a-dev-container
+* https://github.com/bitnami/bitnami-docker-redis
+* https://derkoe.dev/blog/development-environment-in-wsl2/
+* https://partlycloudy.blog/2020/06/05/wsl2-making-windows-10-the-perfect-dev-machine/
