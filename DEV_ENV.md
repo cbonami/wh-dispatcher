@@ -42,6 +42,7 @@ sudo choco install vscode
 ```
 Run it.
 
+
 ## Install Remote Development Extension pack
 
 > Note: check [vscode documentation on remote development](https://code.visualstudio.com/docs/remote) to get the full story
@@ -78,5 +79,29 @@ Start coding :)
 
 At this point you should already have all needed vscode plugins etc installed. If not, check [these instructions](https://code.visualstudio.com/docs/remote/containers-tutorial).
 
+There's just too much to tell, so have a look at the [complete guide](https://code.visualstudio.com/docs/remote/containers#_quick-start-try-a-development-container)
 
-https://code.visualstudio.com/docs/remote/containers#_quick-start-try-a-development-container
+In short:
+* clone this github repo (the one you're looking at)
+* open the code in vscode
+* click '<>' (or press F1) and pick 'reopen in container'
+* wait for the dev container to build
+
+The ![devcontainer.json](./.devcontainer/devcontainer.json) and [Dockerfile](./.devcontainer/Dockerfile) is where the magic happens.
+
+Open a Terminal in vscode:
+
+```
+vscode ➜ /workspaces/wh-dispatcher (master ✗) $ mvn --version
+Apache Maven 3.6.3 (cecedd343002696d0abb50b32b541b8a6ba2883f)
+Maven home: /usr/local/sdkman/candidates/maven/current
+Java version: 11.0.9.1, vendor: Oracle Corporation, runtime: /usr/local/openjdk-11
+Default locale: en, platform encoding: UTF-8
+OS name: "linux", version: "4.19.128-microsoft-standard", arch: "amd64", family: "unix"
+```
+
+You're developing in a dev container with all tools (mvn etc) pre-installed. Same tools and versions for all developers = standardization of the dev environment.
+
+## Install vscode-lombok plugin
+
+https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok
