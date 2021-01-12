@@ -50,6 +50,8 @@ Install the [Remote Development extension pack](https://aka.ms/vscode-remote/dow
 
 ## Option 1: develop on Ubuntu machine
 
+Here, you use the Ubuntu host as the main development platform and run-time for your tests etc.
+
 ### Install vscode-server on Ubuntu
 
 In Ubuntu, install code-server and run it:
@@ -58,7 +60,6 @@ In Ubuntu, install code-server and run it:
 curl -fsSL https://code-server.dev/install.sh | sh
 code-server
 ```
-
 Long story [here](https://github.com/cdr/code-server).
 
 ### Edit code on Ubuntu's filesystem
@@ -74,3 +75,8 @@ Start coding :)
 > Note: when you open a terminal in vscode, it will be a Ubuntu-bash terminal. Here you can run maven etc, and whatever you install in Ubuntu. The Ubuntu subsystem has become your full-time dev environment.
 
 ## Option 2: use a dev container
+
+At this point you should already have all needed vscode plugins etc installed. If not, check [these instructions](https://code.visualstudio.com/docs/remote/containers-tutorial).
+
+
+https://code.visualstudio.com/docs/remote/containers#_quick-start-try-a-development-container
