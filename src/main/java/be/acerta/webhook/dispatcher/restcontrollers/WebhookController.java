@@ -1,5 +1,6 @@
 package be.acerta.webhook.dispatcher.restcontrollers;
 
+import be.acerta.vo.ApplicationDto;
 import be.acerta.webhook.dispatcher.events.MessageReceivedEvent;
 import be.acerta.webhook.dispatcher.model.Application;
 import be.acerta.webhook.dispatcher.model.Message;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/applications")
@@ -32,10 +35,11 @@ public class WebhookController implements ApplicationEventPublisherAware {
      * Register a new application (URL) returning its id
      */
     @PostMapping
-    //@ApiOperation(value = "Register new application")
-    public String registerNewApplication(@RequestParam(required = true) String url, @RequestParam(required = true) String name) {
+    // @ApiOperation(value = "Register new application")
+    public String registerNewApplication(@RequestBody @Valid ApplicationDto body) {
 
-        Application applicationRequest = Application.builder().name(name).url(url).online(true).build();
+        Application applicationRequest = Application.builder().name(body.getName())
+                .url(body.getUrl()).online(true).build();
         Application application = applicationRepository.save(applicationRequest);
 
         log.debug("Received Application {}", application.getUrl());
@@ -46,7 +50,7 @@ public class WebhookController implements ApplicationEventPublisherAware {
     /**
      * List registered applications [{id, URL},...]
      */
-    //@ApiOperation(value = "List applications")
+    // @ApiOperation(value = "List applications")
     @GetMapping
     public Iterable<Application> listApplications() {
         log.debug("Listing applications");
@@ -67,11 +71,10 @@ public class WebhookController implements ApplicationEventPublisherAware {
     /**
      * POST a message to this application
      */
-    //@ApiOperation(value = "Post message to application")
+    // @ApiOperation(value = "Post message to application")
     @PostMapping("/{id}/message")
-    public void postMessageToApplication(@PathVariable("id") String id,
-                                         @RequestBody String body,
-                                         @RequestHeader("Content-Type") String contentType) {
+    public void postMessageToApplication(@PathVariable("id") String id, @RequestBody String body,
+            @RequestHeader("Content-Type") String contentType) {
         validateParam(body, "body");
 
         Application application = getApplication(id);

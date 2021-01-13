@@ -32,8 +32,6 @@ Just run Redis as a windows service on your local W10 machine. See instructions.
 
 Perform some HTTP-request via curl, or use the examples in the [.http](src/test/resources/test.http)-files. vscode and IntelliJ can interprete these standard files.  
 
-Note: the registration service has been developed so that you can register using a simple registration form.
-
 ### Delete application by ID
 
 ```bash
