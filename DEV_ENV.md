@@ -1,16 +1,20 @@
 # WSL2 based dev environment
 
-## optional: install Fluent Terminal
+## Install WSL2
 
-Makes it easy to work with WSL and Powershell from a single terminal.
+https://docs.microsoft.com/en-us/windows/wsl/install-win10
 
-## install WSL2
+Tips:
+* [Fluent Terminal](https://github.com/felixse/FluentTerminal)
+* https://www.hanselman.com/blog/the-easy-way-how-to-ssh-into-bash-and-wsl2-on-windows-10-from-an-external-machine
 
-## generate SSH key and upload it to github
+## Get access to GitHub repo
 
-Needed to access private repo's.
+Generate SSH key and upload it to github
+Needed when accessing private repo's.
 
-## clone github repo
+* [Generating new ssh-key](https://docs.github.com/en/github-ae@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+* [Adding new SSH key to GitHub account](https://docs.github.com/en/github-ae@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account)
 
 ## Install Docker Desktop
 
@@ -51,7 +55,11 @@ Install the [Remote Development extension pack](https://aka.ms/vscode-remote/dow
 
 ## Option 1: develop on Ubuntu machine
 
-Here, you use the Ubuntu host as the main development platform and run-time for your tests etc.
+> Note: not my preferred option
+
+This option let's you use the Ubuntu host as the main development platform and run-time for your tests etc.
+
+### Clone github repo on Ubuntu filesystem
 
 ### Install vscode-server on Ubuntu
 
@@ -77,14 +85,23 @@ Start coding :)
 
 ## Option 2: use a dev container
 
+> Note: option 2 is preferred as it standardizes the IDE for all developers and is 100% discardable i.e. doesn't 'pollute' the Ubuntu subsystem
+
+Supported container types:
+
+* x86_64 / ARMv7l (AArch32) / ARMv8l (AArch64) Debian 9+, Ubuntu 16.04+, CentOS / RHEL 7+
+* x86_64 Alpine Linux 3.9+
+
+Other `glibc` based Linux containers may work if they have [needed Linux prerequisites](https://code.visualstudio.com/docs/remote/linux).
+
 At this point you should already have all needed vscode plugins etc installed. If not, check [these instructions](https://code.visualstudio.com/docs/remote/containers-tutorial).
 
 There's just too much to tell, so have a look at the [complete guide](https://code.visualstudio.com/docs/remote/containers#_quick-start-try-a-development-container)
 
 In short:
-* clone this github repo (the one you're looking at)
-* open the code in vscode
-* click '<>' (or press F1) and pick 'reopen in container'
+* clone this github repo (the one you're looking at) on your local W10 host
+* open the cloned folder in vscode
+* click '<>' (bottom-left corner of vscode) and pick 'WSL-Remote Container: reopen in container'
 * wait for the dev container to build
 
 The ![devcontainer.json](./.devcontainer/devcontainer.json) and [Dockerfile](./.devcontainer/Dockerfile) is where the magic happens.
@@ -102,6 +119,17 @@ OS name: "linux", version: "4.19.128-microsoft-standard", arch: "amd64", family:
 
 You're developing in a dev container with all tools (mvn etc) pre-installed. Same tools and versions for all developers = standardization of the dev environment.
 
-## Install vscode-lombok plugin
+Finally, run the webapp:
 
-https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok
+```
+vscode ➜ /workspaces/wh-dispatcher (master ✗) $ mvn spring-boot:run
+```
+
+Point your browser to [http://localhost:8080/](http://localhost:8080/). The HAL Explorer will load where you can inspect and call the REST api.
+
+> Note: spring devtools is also started, so there will be 2 ports forwarded to your local host (8080, x) where x is a random port like 35729.
+
+## Other vscode plugins
+
+* [vscode-lombok plugin](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok)
+* [vscode-spring-boot plugin](https://marketplace.visualstudio.com/items?itemName=Pivotal.vscode-spring-boot)
