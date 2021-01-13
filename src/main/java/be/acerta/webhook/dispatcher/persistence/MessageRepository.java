@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-
+@Deprecated
 public interface MessageRepository extends CrudRepository<Message, String> {
 
     List<Message> findAllByApplicationOrderByIdAsc(Application destination);

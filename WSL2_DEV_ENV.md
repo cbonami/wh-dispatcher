@@ -140,3 +140,4 @@ These plugins will be automatically installed at dev container startup:
 * [vscode-spring-initializr](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-spring-initializr)
 * [rest-client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 * [vscode-pull-request-github](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)
+* [SonarSource.sonarlint-vscode](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode)

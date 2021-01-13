@@ -35,32 +35,24 @@ public class WebhookController implements ApplicationEventPublisherAware {
      * Register a new application (URL) returning its id
      */
     @PostMapping
-    // @ApiOperation(value = "Register new application")
     public String registerNewApplication(@RequestBody @Valid ApplicationDto body) {
-
         Application applicationRequest = Application.builder().name(body.getName())
                 .url(body.getUrl()).online(true).build();
         Application application = applicationRepository.save(applicationRequest);
-
-        log.debug("Received Application {}", application.getUrl());
-
         return application.getId();
     }
 
     /**
      * List registered applications [{id, URL},...]
      */
-    // @ApiOperation(value = "List applications")
     @GetMapping
     public Iterable<Application> listApplications() {
-        log.debug("Listing applications");
         return applicationRepository.findAll();
     }
 
     /**
      * Delete a application by id
      */
-    //@ApiOperation(value = "Delete application by id")
     @DeleteMapping("/{id}")
     public void deleteApplication(@PathVariable("id") String id) {
         Application application = getApplication(id);
@@ -69,9 +61,8 @@ public class WebhookController implements ApplicationEventPublisherAware {
     }
 
     /**
-     * POST a message to this application
+     * POST a message to this application; used during testing
      */
-    // @ApiOperation(value = "Post message to application")
     @PostMapping("/{id}/message")
     public void postMessageToApplication(@PathVariable("id") String id, @RequestBody String body,
             @RequestHeader("Content-Type") String contentType) {

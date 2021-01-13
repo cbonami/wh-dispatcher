@@ -11,7 +11,7 @@ By default, Redis runs on port 6379.
 
 #### Option 1: using WSL2
 
-= preferred option, especially when using WSL-Remote for Containers
+= preferred option, especially when using WSL-Remote for Containers; development environment is 100% pre-cooked and standard
 
 See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for setup.
 
@@ -30,7 +30,7 @@ Just run Redis as a windows service on your local W10 machine. See instructions.
 
 ## Use app
 
-Perform some HTTP-request via curl, or use the examples in the [.http](src/test/resources/test.http)-files. vscode and IntelliJ can interprete these standard files.  
+Perform some HTTP-request via curl, or use the examples in the [.http](src/test/resources/test.http)-files. Both IntelliJ and vscode (via an extension) can interprete these standard .http files.  
 
 ### Delete application by ID
 
