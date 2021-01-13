@@ -2,18 +2,9 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.137.0/containers/java
 {
   "name": "Java",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "args": {
-      // Update the VARIANT arg to pick a Java version: 11, 14
-      "VARIANT": "11",
-      // Options
-      "INSTALL_MAVEN": "true",
-      "INSTALL_GRADLE": "false",
-      "INSTALL_NODE": "false",
-      "NODE_VERSION": "lts/*"
-    }
-  },
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
 
   // Set *default* container specific settings.json values on container create.
   "settings": {
@@ -31,7 +22,7 @@
   "forwardPorts": [8080],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "mvn package",
+  //"postCreateCommand": "mvn package",
 
   // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode"
