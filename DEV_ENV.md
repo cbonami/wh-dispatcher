@@ -87,6 +87,8 @@ Start coding :)
 
 > Note: option 2 is preferred as it standardizes the IDE for all developers and is 100% discardable i.e. doesn't 'pollute' the Ubuntu subsystem
 
+![](./img/architecture-containers.png)
+
 Supported container types:
 
 * x86_64 / ARMv7l (AArch32) / ARMv8l (AArch64) Debian 9+, Ubuntu 16.04+, CentOS / RHEL 7+
@@ -109,7 +111,7 @@ The ![devcontainer.json](./.devcontainer/devcontainer.json) and [Dockerfile](./.
 Open a Terminal in vscode:
 
 ```
-vscode ➜ /workspaces/wh-dispatcher (master ✗) $ mvn --version
+vscode ➜ /workspace (master ✗) $ mvn --version
 Apache Maven 3.6.3 (cecedd343002696d0abb50b32b541b8a6ba2883f)
 Maven home: /usr/local/sdkman/candidates/maven/current
 Java version: 11.0.9.1, vendor: Oracle Corporation, runtime: /usr/local/openjdk-11
@@ -122,14 +124,18 @@ You're developing in a dev container with all tools (mvn etc) pre-installed. Sam
 Finally, run the webapp:
 
 ```
-vscode ➜ /workspaces/wh-dispatcher (master ✗) $ mvn spring-boot:run
+vscode ➜ /workspace (master ✗) $ mvn spring-boot:run
 ```
 
 Point your browser to [http://localhost:8080/](http://localhost:8080/). The HAL Explorer will load where you can inspect and call the REST api.
 
 > Note: spring devtools is also started, so there will be 2 ports forwarded to your local host (8080, x) where x is a random port like 35729.
 
-## Other vscode plugins
+## Installed vscode plugins
+
+These plugins will be automatically installed at dev container startup:
 
 * [vscode-lombok plugin](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok)
 * [vscode-spring-boot plugin](https://marketplace.visualstudio.com/items?itemName=Pivotal.vscode-spring-boot)
+* [vscode-spring-initializr](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-spring-initializr)
+* [rest-client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
