@@ -19,7 +19,8 @@
     "humao.rest-client",
     "vscjava.vscode-spring-initializr",
     "Pivotal.vscode-spring-boot",
-    "GabrielBB.vscode-lombok"
+    "GabrielBB.vscode-lombok",
+    "GitHub.vscode-pull-request-github"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

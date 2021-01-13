@@ -9,21 +9,28 @@ occurs.
 
 By default, Redis runs on port 6379.
 
-#### Option 1: Redis on Windows
+#### Option 1: using WSL2
+
+= preferred option, especially when using WSL-Remote for Containers
+
+See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for setup.
+
+#### Option 2: 100% Windows 10
 
 Just run Redis as a windows service on your local W10 machine. See instructions. https://medium.com/@binary10111010/redis-cli-installation-on-windows-684fb6b6ac6b
 
-#### Option: Redis on Docker
-
-
-
 ## Run app
 
-API description becomes available at [http://localhost:8080/v3/api-docs/](http://localhost:8080/v3/api-docs/)
+```bash
+./mvnw spring-boot:run
+```
+
+* [http://localhost:8080/] -> HAL Browser
+* [http://localhost:8080/v3/api-docs/](http://localhost:8080/v3/api-docs/) -> API description.
 
 ## Use app
 
-Perform [some API requests](src/test/resources/test.http)
+Perform some HTTP-request via curl, or use the examples in the [.http](src/test/resources/test.http)-files. vscode and IntelliJ can interprete these standard files.  
 
 Note: the registration service has been developed so that you can register using a simple registration form.
 
@@ -69,3 +76,4 @@ redis-cli keys *
 * https://github.com/bitnami/bitnami-docker-redis
 * https://derkoe.dev/blog/development-environment-in-wsl2/
 * https://partlycloudy.blog/2020/06/05/wsl2-making-windows-10-the-perfect-dev-machine/
+* https://kb.objectrocket.com/redis/run-redis-with-docker-compose-1055

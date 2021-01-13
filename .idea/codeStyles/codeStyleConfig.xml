@@ -1,0 +1,6 @@
+<!-- https://stackoverflow.com/questions/54676137/how-to-make-vs-code-organize-java-imports-like-intellij -->
+<component name="ProjectCodeStyleConfiguration">
+  <state>
+    <option name="USE_PER_PROJECT_SETTINGS" value="true" />
+  </state>
+</component>

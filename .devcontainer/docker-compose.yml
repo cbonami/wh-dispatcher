@@ -33,6 +33,7 @@ services:
 
   redis:
     image: 'docker.io/bitnami/redis:6.0-debian-10'
+    restart: unless-stopped
     environment:
       # ALLOW_EMPTY_PASSWORD is recommended only for development.
       - ALLOW_EMPTY_PASSWORD=yes
@@ -41,24 +42,8 @@ services:
       - '6379:6379'
     volumes:
       - 'redis_data:/bitnami/redis/data'
+    # Add "forwardPorts": ["6379"] to **devcontainer.json** to forward Redis locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
 
 volumes:
   redis_data:
-
-#   db:
-#     image: mongo:latest
-#     restart: unless-stopped
-#     volumes:
-#       - mongodb-data:/data/db
-
-#     # Uncomment to change startup options
-#     # environment:
-#     #  MONGO_INITDB_ROOT_USERNAME: root
-#     #  MONGO_INITDB_ROOT_PASSWORD: example
-#     #  MONGO_INITDB_DATABASE: your-database-here
-
-#     # Add "forwardPorts": ["27017"] to **devcontainer.json** to forward MongoDB locally.
-#     # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-# volumes:
-#   mongodb-data:
