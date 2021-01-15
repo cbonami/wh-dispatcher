@@ -1,23 +1,24 @@
 # Webhook Dispatcher
 
-Service that offers an API to registers webhooks at subscriber's end, and then invokes these hooks (POST) as events
-occurs.
+Spring Boot application that 
+- offers to event-subscribers an HTTP-API where they can register a webhook (i.e. an endpoint URL in the subscriber's api)
+- POSTs event-payloads to these hooks as events occur at publisher's end
 
-## Use
+## Setup Dev Env
 
-### Start Redis
+### Option 1: using WSL2
 
-By default, Redis runs on port 6379.
-
-#### Option 1: using WSL2
-
-= preferred option, especially when using WSL-Remote for Containers; development environment is 100% pre-cooked and standard
+= preferred option, especially when using WSL-Remote for Containers; development environment is 100% pre-cooked and standard for all developers
 
 See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for setup.
 
-#### Option 2: 100% Windows 10
+### Option 2: 100% Windows10 setup
 
-Just run Redis as a windows service on your local W10 machine. See instructions. https://medium.com/@binary10111010/redis-cli-installation-on-windows-684fb6b6ac6b
+Simply install Redis as a windows service on your local W10 machine. See instructions [here](https://medium.com/@binary10111010/redis-cli-installation-on-windows-684fb6b6ac6b).
+
+## Run Redis
+
+By default, Redis runs on port 6379.
 
 ## Run app
 
@@ -25,7 +26,7 @@ Just run Redis as a windows service on your local W10 machine. See instructions.
 ./mvnw spring-boot:run
 ```
 
-* [http://localhost:8080/] -> HAL Browser
+* [http://localhost:8080/](http://localhost:8080/) -> HAL Browser
 * [http://localhost:8080/v3/api-docs/](http://localhost:8080/v3/api-docs/) -> API description.
 
 ## Use app

@@ -1,4 +1,4 @@
-package be.acerta.vo;
+package be.acerta.webhook.dispatcher.vo;
 
 import lombok.*;
 

@@ -90,6 +90,12 @@
             <type>jar</type>
         </dependency>
 
+		<dependency>
+			<groupId>org.redisson</groupId>
+			<artifactId>redisson</artifactId>
+			<version>3.14.1</version>
+		</dependency>
+
         <dependency>
             <groupId>com.lordofthejars</groupId>
             <artifactId>nosqlunit-redis</artifactId>
@@ -101,6 +107,13 @@
             <artifactId>embedded-redis</artifactId>
             <version>${embedded-redis.version}</version>
         </dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20201115</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

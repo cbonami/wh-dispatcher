@@ -1,11 +1,11 @@
 package be.acerta.webhook.dispatcher.restcontrollers;
 
-import be.acerta.vo.ApplicationDto;
 import be.acerta.webhook.dispatcher.events.MessageReceivedEvent;
 import be.acerta.webhook.dispatcher.model.Application;
 import be.acerta.webhook.dispatcher.model.Message;
 import be.acerta.webhook.dispatcher.persistence.ApplicationRepository;
 import be.acerta.webhook.dispatcher.persistence.MessageRepository;
+import be.acerta.webhook.dispatcher.vo.ApplicationDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;

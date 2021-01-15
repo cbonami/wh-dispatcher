@@ -19,3 +19,5 @@ sudo netsh interface portproxy add v4tov4 listenport="6379" connectaddress="$wsl
 sudo netsh interface portproxy add v4tov4 listenport="6380" connectaddress="$wslIp" connectport="6379"
 ```
 
+MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+

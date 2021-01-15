@@ -1,3 +1,7 @@
 {
-    "java.completion.importOrder": ["java", "javax"],
+    "java.completion.importOrder": [
+        "java",
+        "javax"
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive",
 }
