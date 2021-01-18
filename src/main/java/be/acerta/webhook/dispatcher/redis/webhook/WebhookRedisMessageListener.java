@@ -1,4 +1,4 @@
-package be.acerta.webhook.dispatcher.redis.specific;
+package be.acerta.webhook.dispatcher.redis.webhook;
 
 import be.acerta.webhook.dispatcher.redis.EventType;
 import be.acerta.webhook.dispatcher.redis.EventStrategy;
@@ -10,9 +10,12 @@ import java.util.Optional;
 
 //bonami import static ParameterNaam.SKEDIFY_REDIS_MAX_RETRY_INTERVAL;
 
-public class SkedifyRedisMessageListener extends RedisMessageListener {
+/**
+ * Reads messages from REDIS and calls a webhook for each of them.
+ */
+public class WebhookRedisMessageListener extends RedisMessageListener {
 
-    public SkedifyRedisMessageListener(SkedifyRedisClient client, List<EventStrategy> eventStrategies) {
+    public WebhookRedisMessageListener(WebhookRedisClient client, List<EventStrategy> eventStrategies) {
         super(client, eventStrategies);
     }
 

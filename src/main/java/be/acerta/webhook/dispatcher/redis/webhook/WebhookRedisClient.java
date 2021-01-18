@@ -1,17 +1,15 @@
-package be.acerta.webhook.dispatcher.redis.specific;
+package be.acerta.webhook.dispatcher.redis.webhook;
 
 import be.acerta.webhook.dispatcher.redis.RedisClient;
-import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 
-@Slf4j
-public class SkedifyRedisClient extends RedisClient {
+public class WebhookRedisClient extends RedisClient {
 
     private final String groupId;
 
-    public SkedifyRedisClient(RedissonClient client) {
+    public WebhookRedisClient(RedissonClient client) {
         super(client);
-        this.groupId = "fooRedisGroup";
+        this.groupId = "webhookRedisGroup";
     }
 
     @Override
