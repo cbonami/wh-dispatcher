@@ -1,12 +1,16 @@
 package  be.acerta.webhook.dispatcher.redis.dto.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import be.acerta.webhook.dispatcher.redis.dto.Dto;
+import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
-public class RedisEventRequestDtoV1 extends Dto {
+@ToString
+@EqualsAndHashCode
+public class RedisEventRequestDtoV1 implements Serializable {
     
     @JsonProperty(required = true)
     @NotNull(message = "groupId mag niet leeg zijn")

@@ -1,10 +1,14 @@
 package  be.acerta.webhook.dispatcher.redis.dto.v1;
 
+import java.io.Serializable;
 import java.util.Set;
 
-import be.acerta.webhook.dispatcher.redis.dto.Dto;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-public class RedisGroupInfoDtoV1 extends Dto {
+@EqualsAndHashCode
+@ToString
+public class RedisGroupInfoDtoV1 implements Serializable {
 
     public String id;
     public Integer aantalBuckets;

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import be.acerta.webhook.dispatcher.redis.EventStrategy;
+import be.acerta.webhook.dispatcher.redis.webhook.WebhookRedisMessageProducer;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,8 @@ public class WebhookAdapterConfig {
     }
 
     @Bean
-    public WebhookRedisMessageProducer skedifyRedisMessageProducer(WebhookRedisClient client) {
+    public WebhookRedisMessageProducer webhookRedisMessageProducer(WebhookRedisClient client) {
         return new WebhookRedisMessageProducer(client);
     }
+
 }

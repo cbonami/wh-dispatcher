@@ -1,21 +1,25 @@
 package be.acerta.webhook.dispatcher.redis.webhook;
 
-import static be.acerta.webhook.dispatcher.JsonUtil.jsonToObject;
+import java.util.UUID;
 
+import be.acerta.webhook.dispatcher.JsonUtil;
+import be.acerta.webhook.dispatcher.redis.RedisClient;
 import be.acerta.webhook.dispatcher.redis.RedisMessageProducer;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class WebhookRedisMessageProducer extends RedisMessageProducer {
 
-    public WebhookRedisMessageProducer(WebhookRedisClient client) {
+    public WebhookRedisMessageProducer(RedisClient client) {
         super(client);
     }
 
-    public void doPublish(String message, String eventName, String correlationId) {
-        WebhookEventDto skedifyEventDto = jsonToObject(message, WebhookEventDto.class);
-        log.info("Publishing event {} met event id {} naar bucket id {}", eventName, skedifyEventDto.id,
-                skedifyEventDto.bucketId);
-        publish(skedifyEventDto.bucketId, message);
+    public void publish(String appName, String webhookUrl, String queueId, String hmac, String messageType,
+            String message) {
+
+        // put json data in an envelope
+        // todo apply hmac encryption
+        WebhookEventDto webhookEventDto = new WebhookEventDto(message, messageType, webhookUrl, UUID.randomUUID().toString());
+
+        super.doPublish(appName + "/" + queueId, JsonUtil.objectToJson(webhookEventDto));
     }
+
 }

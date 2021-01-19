@@ -2,8 +2,6 @@ package be.acerta.webhook.dispatcher.redis.webhook;
 
 import static be.acerta.webhook.dispatcher.JsonUtil.jsonToObject;
 
-import javax.inject.Named;
-
 import be.acerta.webhook.dispatcher.redis.EventStrategy;
 import be.acerta.webhook.dispatcher.redis.EventType;
 import be.acerta.webhook.dispatcher.redis.RedisClient;
@@ -32,10 +30,7 @@ public class WebhookEventStrategy implements EventStrategy {
         this.redisClient = redisClient;
         WebhookEventDto webhookEventDto = jsonToObject(messageBody, WebhookEventDto.class);
         // IdempotencyKey idempotencyKey = createOrGetIdempotencyKey(getEventType(), WebhookEventDto.id);
-        WebhookEventMetaData webhookEventMetaData = new WebhookEventMetaData(getEventType(), webhookEventDto.id);
-        log.info(String.format("Handling Webhook event id %s met boeco event id %s", webhookEventDto.id, correlationId));
-        //KibanaLogger.setVdabProcessId(correlationId);
-        handle(webhookEventDto.jsonData, webhookEventMetaData);
+
     }
 
 /*     private IdempotencyKey createOrGetIdempotencyKey(EventType eventType, Long WebhookEventId) {
@@ -46,9 +41,5 @@ public class WebhookEventStrategy implements EventStrategy {
         return EventType.WEBHOOK;
     }
 
-    protected void handle(String eventData, WebhookEventMetaData webhookEventMetaData) {
-        // todo invoke webhook
-        log.debug("handle event {}", eventData);
-    }
 }
 

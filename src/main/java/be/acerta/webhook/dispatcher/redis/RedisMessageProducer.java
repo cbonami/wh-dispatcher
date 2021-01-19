@@ -13,12 +13,12 @@ public abstract class RedisMessageProducer {
         this.client = client;
     }
 
-    public boolean publish(String bucketId, String message) {
+    protected boolean doPublish(String queueId, String message) {
 
         // main cache met key + lijst(messages) als value (typische multimap)
         // key = bucket
         RMultimapCache<String, String> messages = client.getBuckets();
-        if (!messages.put(bucketId, message))
+        if (!messages.put(queueId, message))
             return false;
 
         // 3 of 4 caches
@@ -27,7 +27,7 @@ public abstract class RedisMessageProducer {
         // wanneer processor in gang schiet dan pusht die bucket met UUID in processorlocks, zodanig dat een andere processor er niet gaat aankomen
         // aparte cache; reden: op de andere cache (hierboven) kan je geen locks leggen
         RMap<String, String> processorlocks = client.getProcessors();
-        processorlocks.putIfAbsent(bucketId, UNASSIGNED_KEY);
+        processorlocks.putIfAbsent(queueId, UNASSIGNED_KEY);
 
         return true;
     }
