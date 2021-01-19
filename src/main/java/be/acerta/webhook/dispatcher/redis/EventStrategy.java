@@ -4,7 +4,7 @@ public interface EventStrategy {
 
     boolean canHandle(EventType eventType);
 
-    void handleEventMessageBody(String messageBody, String correlationId, RedisClient redisClient);
+    void handleEventMessageBody(String messageBody, String tracingCorrelationId);
 
     EventType getEventType();
 }

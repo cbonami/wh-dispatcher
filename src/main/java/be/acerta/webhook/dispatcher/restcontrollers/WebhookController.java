@@ -1,17 +1,21 @@
 package be.acerta.webhook.dispatcher.restcontrollers;
 
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
 import be.acerta.webhook.dispatcher.model.Application;
+import be.acerta.webhook.dispatcher.model.Bucket;
 import be.acerta.webhook.dispatcher.persistence.ApplicationRepository;
-import be.acerta.webhook.dispatcher.persistence.MessageRepository;
 import be.acerta.webhook.dispatcher.redis.webhook.WebhookRedisMessageProducer;
 import be.acerta.webhook.dispatcher.vo.ApplicationDto;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,21 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/applications")
 @Slf4j
-public class WebhookController /* implements ApplicationEventPublisherAware */ {
+public class WebhookController {
 
     @Autowired
     private ApplicationRepository applicationRepository;
 
     @Autowired
-    private MessageRepository messageRepository;
-
-    @Autowired
     private WebhookRedisMessageProducer webhookRedisMessageProducer;
 
-    /*
-     * // Event publisher private ApplicationEventPublisher
-     * applicationEventPublisher;
-     */
     /**
      * Register a new application (URL) returning its id
      */
@@ -58,12 +55,25 @@ public class WebhookController /* implements ApplicationEventPublisherAware */ {
         return applicationRepository.findAll();
     }
 
+    @GetMapping("/{appId}/buckets")
+    public Iterable<Bucket> listBuckets(@PathVariable("appId") String appId) {
+        // todo fix
+        return Collections.emptyList();
+    }
+
+    @GetMapping("/{appId}/buckets/{bucketId}/messages")
+    public Iterable<Bucket> listMessagesByBucket(@PathVariable("appId") String appId,
+            @PathVariable("bucketId") String bucketId) {
+        // todo fix
+        return Collections.emptyList();
+    }
+
     /**
      * Delete a application by id
      */
-    @DeleteMapping("/{id}")
-    public void deleteApplication(@PathVariable("id") String id) {
-        Application application = getApplication(id);
+    @DeleteMapping("/{appId}")
+    public void deleteApplication(@PathVariable("appId") String appId) {
+        Application application = getApplication(appId);
         applicationRepository.delete(application);
         log.debug("Deleted Application {}", application.getUrl());
     }
@@ -71,15 +81,17 @@ public class WebhookController /* implements ApplicationEventPublisherAware */ {
     /**
      * POST a message to this application; used during testing
      */
-    @PostMapping("/{id}/queue/{queueId}/message/{messageType}")
+    @PostMapping("/{appId}/buckets/{bucketId}/messages/{messageType}")
     // todo validate params
-    public void postMessageToApplication(@PathVariable("id") String appId, @PathVariable("queueId") String queueId,
-            @PathVariable("messageType") String messageType, @RequestBody String messageBody) {
+    public void postMessageToApplication(@PathVariable("appId") String appId, @PathVariable("bucketId") String bucketId,
+            @PathVariable("messageType") String messageType, @RequestBody String messageBody,
+            @RequestHeader("Content-Type") String mimeType) {
 
         Application application = getApplication(appId);
         log.debug("Publishing Message {} for existing Application {}", messageBody, application.getName());
-        this.webhookRedisMessageProducer.publish(application.getName(), application.getUrl(), queueId, "", messageType,
-                messageBody);
+        this.webhookRedisMessageProducer.publish(application.getName(), application.getUrl(), bucketId, "", messageType,
+                messageBody,
+                StringUtils.isEmpty(mimeType) ? MediaType.APPLICATION_JSON : MimeTypeUtils.parseMimeType(mimeType));
     }
 
     private Application getApplication(String id) throws NoSuchElementException {

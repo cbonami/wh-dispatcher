@@ -7,30 +7,21 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableAsync
 @EnableScheduling
 public class DispatcherApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DispatcherApplication.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(DispatcherApplication.class, args);
     }
 
-    @Bean
-    JedisConnectionFactory jedisConnectionFactory() {
-        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setHostName("localhost");
-        //jedisConnectionFactory.setHostName("host.docker.internal");
-        jedisConnectionFactory.setPort(6379);
-        return jedisConnectionFactory;
-    }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
-        return template;
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
 }

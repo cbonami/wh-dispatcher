@@ -1,19 +1,18 @@
 package be.acerta.webhook.dispatcher;
 
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
+import static java.lang.String.format;
+import static org.slf4j.LoggerFactory.getLogger;
+
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
-
-import java.io.IOException;
-
-import static be.acerta.webhook.dispatcher.BoekingsComponentException.boekingscomponentException;
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
-import static java.lang.String.format;
-import static org.slf4j.LoggerFactory.getLogger;
 
 public class JsonUtil {
 

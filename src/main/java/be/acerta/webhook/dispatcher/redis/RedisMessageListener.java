@@ -156,7 +156,7 @@ public abstract class RedisMessageListener {
 
     private void handleEvent(String msg, EventStrategy eventStrategy) {
         //setVdabCallingApplication(getCurrentApplication());
-        eventStrategy.handleEventMessageBody(msg, getCorrelationId(msg), client);
+        eventStrategy.handleEventMessageBody(msg, getCorrelationId(msg));
     }
 
     private RLock awaitRetryAndReleaseProcessor(String bucketId, String msg, Exception ex) {

@@ -111,9 +111,9 @@ public abstract class RedisClient {
      * @param message
      */
     public void removeMessage(String bucketId, String message) {
-        LOGGER.info("Removing message {} met message id {} van bucket id {}", message, getId(message), bucketId);
+        LOGGER.info("Removing message {} with message id {} from bucket id {}", message, getId(message), bucketId);
         getBuckets().remove(bucketId, message);
-        if (getBuckets().get(bucketId).size() == 0) {
+        if (getBuckets().get(bucketId).isEmpty()){
             LOGGER.info("Removing bucket id {}", bucketId);
             getProcessors().remove(bucketId);
         }
