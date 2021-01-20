@@ -18,8 +18,8 @@ public class WebhookRedisMessageProducer extends RedisMessageProducer {
 
         // put json data in an envelope
         // todo apply hmac encryption
-        WebhookEventDto webhookEventDto = new WebhookEventDto(message, messageType, webhookUrl,
-                UUID.randomUUID().toString(), mediaType.getType());
+        WebhookEventDto webhookEventDto = new WebhookEventDto(UUID.randomUUID().toString(), message, messageType,
+                webhookUrl, UUID.randomUUID().toString(), mediaType.getType());
 
         super.doPublish(appName + "/" + queueId, JsonUtil.objectToJson(webhookEventDto));
     }

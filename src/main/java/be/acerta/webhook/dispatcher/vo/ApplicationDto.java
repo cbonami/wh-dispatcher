@@ -4,9 +4,6 @@ import lombok.*;
 
 @Data
 @Builder
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ApplicationDto {
 
     @NonNull

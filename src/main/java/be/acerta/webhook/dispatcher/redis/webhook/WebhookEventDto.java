@@ -17,9 +17,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WebhookEventDto implements Serializable {
 
-    //private Long id;
-    //private String queueId;
-    private String jsonData;
+    private String id;
+    private String data;
     private String eventType;
     private String webhookUrl;
     private String mimeType;

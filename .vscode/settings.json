@@ -4,4 +4,5 @@
         "javax"
     ],
     "java.configuration.updateBuildConfiguration": "interactive",
+    "files.autoSave": "onFocusChange"
 }

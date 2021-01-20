@@ -5,7 +5,7 @@ server:
 #JPA Configuration
 spring:
     application:
-        name: webhook-service
+        name: webhook-dispatcher
     profiles:
         active: local
 logging.level.be.acerta: DEBUG

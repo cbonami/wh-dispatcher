@@ -1,30 +1,27 @@
 package be.acerta.webhook.dispatcher.redis;
 
-import org.json.JSONObject;
-import org.redisson.api.RLock;
-import org.redisson.api.map.event.EntryCreatedListener;
-import org.redisson.api.map.event.EntryExpiredListener;
-import org.redisson.api.map.event.EntryUpdatedListener;
-import org.slf4j.Logger;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-
 import static be.acerta.webhook.dispatcher.redis.RedisClient.NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR;
 import static be.acerta.webhook.dispatcher.redis.RedisClient.UNASSIGNED_KEY;
 import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toSet;
-import static org.slf4j.LoggerFactory.getLogger;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
+import org.redisson.api.RLock;
+import org.redisson.api.map.event.EntryCreatedListener;
+import org.redisson.api.map.event.EntryExpiredListener;
+import org.redisson.api.map.event.EntryUpdatedListener;
+
+@Slf4j
 public abstract class RedisMessageListener {
 
-    private static final Logger LOGGER = getLogger(RedisMessageListener.class);
-
     private List<EventStrategy> eventStrategies;
-
     private final String id;
     private RedisClient client;
 
@@ -40,8 +37,8 @@ public abstract class RedisMessageListener {
 
         // processorlock caches (zie producer)
         // listener en lock systeem zit hier
-        // groupId is unieke naam bv 'projectbeheer_2_boeko'
-        LOGGER.info("--- Adding listeners for group id {} ---", client.groupId());
+        // groupId is unieke naam voor integratie-stroom; bv 'appX_2_appY'
+        log.info("--- Adding listeners for group id {} ---", client.groupId());
         client.getProcessors().addListener((EntryCreatedListener<String, String>) e -> processMessage(e.getKey()));
         client.getProcessors().addListener((EntryUpdatedListener<String, String>) e -> processMessage(e.getKey()));
 
@@ -55,7 +52,7 @@ public abstract class RedisMessageListener {
         // monitor
         client.getAwaitRetries().addListener((EntryExpiredListener<String, Integer>) e -> processRetry(e.getKey()));
 
-        LOGGER.info("--- Start processing existing keys for group id {} ---", client.groupId());
+        log.info("--- Start processing existing keys for group id {} ---", client.groupId());
         client.getBuckets().keySet().forEach(this::processMessage);
     }
 
@@ -68,15 +65,15 @@ public abstract class RedisMessageListener {
                 try {
                     String firstMessageId = determineFirstMessageId(bucketId);
                     messageId.set(firstMessageId);
-                    LOGGER.info("Processing message id {} voor bucket id {}", firstMessageId, bucketId);
+                    log.info("Processing message id {} for bucket id {}", firstMessageId, bucketId);
                     determineEventType(msg).ifPresent(eventType -> {
-                        LOGGER.info("Determined event type {} voor message id {} en bucket id {}", eventType,
+                        log.info("Determined event type {} for message id {} and bucket id {}", eventType,
                                 firstMessageId, bucketId);
 
                         // strategy pattern om te zien wat er moet gebeuren
-                        // eventType bepaalt strategy
+                        // eventType bepaalt gekozen strategy
                         determineStrategy(eventType).ifPresent(eventStrategy -> {
-                            LOGGER.info("Determined event strategy {} voor message id {} en bucket id {}",
+                            log.info("Determined event strategy {} for message id {} and bucket id {}",
                                     eventStrategy, firstMessageId, bucketId);
                             handleEvent(msg, eventStrategy);
                         });
@@ -103,10 +100,10 @@ public abstract class RedisMessageListener {
         } catch (Exception ex) {
             String actualMessageId = messageId.get();
             if (actualMessageId != null) {
-                LOGGER.error(format("Process message id %s voor bucket id %s is gefaald", actualMessageId, bucketId),
+                log.error(format("Process message id %s for bucket id %s has failed", actualMessageId, bucketId),
                         ex);
             } else {
-                LOGGER.error(format("Process message voor bucket id %s is gefaald, message id niet gevonden", bucketId),
+                log.error(format("Process message for bucket id %s has failed, message id not found", bucketId),
                         ex);
             }
         } finally {
@@ -146,7 +143,7 @@ public abstract class RedisMessageListener {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.error(format("Time-out processing voor bucketId[%s] is gefaald", bucketId), ex);
+            log.error(format("Time-out processing for bucketId[%s] has failed", bucketId), ex);
         } finally {
             if (awaitRetryLock != null && awaitRetryLock.isHeldByCurrentThread()) {
                 awaitRetryLock.unlock();
@@ -155,12 +152,11 @@ public abstract class RedisMessageListener {
     }
 
     private void handleEvent(String msg, EventStrategy eventStrategy) {
-        //setVdabCallingApplication(getCurrentApplication());
         eventStrategy.handleEventMessageBody(msg, getCorrelationId(msg));
     }
 
     private RLock awaitRetryAndReleaseProcessor(String bucketId, String msg, Exception ex) {
-        LOGGER.error(format("Afhandeling event met correlationId[%s] is gefaald", getCorrelationId(msg)), ex);
+        log.error(format("Processing of event with correlationId[%s] has failed", getCorrelationId(msg)), ex);
         RLock awaitRetryLock = client.getAwaitRetryLock(bucketId);
         // semafoor, omdat we vanalles moeten berekenen hieronder
         awaitRetryLock.lock();
@@ -170,8 +166,8 @@ public abstract class RedisMessageListener {
         if (nextRetryInterval == null || nextRetryInterval == 0) {
             nextRetryInterval = NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR;
         }
-        if (LOGGER.isErrorEnabled())
-            LOGGER.error(format("Afhandeling event met correlationId[%s] is gefaald. Volgende poging in %s seconden",
+        if (log.isErrorEnabled())
+            log.error(format("Processing of event with correlationId[%s] has failed. Next attempt in %s secs",
                     getCorrelationId(msg), nextRetryInterval), ex);
         client.getAwaitRetries().fastPut(bucketId, nextRetryInterval, nextRetryInterval, SECONDS);
 
@@ -197,9 +193,9 @@ public abstract class RedisMessageListener {
 
     private void unassignExistingListeners() {
         // look for existing listeners and activate
-        LOGGER.info("--- Unassigning existing listeners on buckets for group id {} ---", client.groupId());
+        log.info("--- Unassigning existing listeners on buckets for group id {} ---", client.groupId());
         client.getProcessors().entrySet().stream().filter(entry -> !entry.getValue().equals(UNASSIGNED_KEY))
-                .peek(entry -> LOGGER.info("--- Found listener to unassign with id {} on bucket {} ", entry.getKey(),
+                .peek(entry -> log.info("--- Found listener to unassign with id {} on bucket {} ", entry.getKey(),
                         entry.getValue()))
                 .collect(toSet()).iterator().forEachRemaining(entry -> entry.setValue(UNASSIGNED_KEY));
     }

@@ -37,7 +37,7 @@ public class WebhookEventStrategy implements EventStrategy {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         // todo pass tracingCorrelationId
-        HttpEntity<String> entity = new HttpEntity<>("body", headers);
+        HttpEntity<String> entity = new HttpEntity<>(webhookEventDto.getData(), headers);
         restTemplate.exchange(webhookEventDto.getWebhookUrl(), HttpMethod.POST, entity, String.class);
     }
 

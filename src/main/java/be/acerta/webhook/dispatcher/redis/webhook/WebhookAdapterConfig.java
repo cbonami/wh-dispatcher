@@ -7,15 +7,8 @@ import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
 public class WebhookAdapterConfig {
-
-    // @Inject
-    // private List<EventStrategy> eventStrategies;
-
-    // @Inject
-    // private ParameterService parameterService;
 
     @Bean
     public WebhookRedisClient webhookRedisClient(RedissonClient client) {
@@ -23,7 +16,8 @@ public class WebhookAdapterConfig {
     }
 
     @Bean
-    public WebhookRedisMessageListener webhookRedisMessageListener(WebhookRedisClient webhookRedisClient, List<EventStrategy> eventStrategies) {
+    public WebhookRedisMessageListener webhookRedisMessageListener(WebhookRedisClient webhookRedisClient,
+            List<EventStrategy> eventStrategies) {
         return new WebhookRedisMessageListener(webhookRedisClient, eventStrategies);
     }
 

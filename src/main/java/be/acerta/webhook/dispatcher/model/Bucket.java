@@ -1,18 +1,16 @@
 package be.acerta.webhook.dispatcher.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 /**
  * A mini-queue for e.g. a specific person. All messages in the bucket will be
  * delivered in fixed order.
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class Bucket {
+@JsonInclude(Include.NON_NULL)
+public class Bucket extends RepresentationModel<Bucket> {
     private String id;
 }
