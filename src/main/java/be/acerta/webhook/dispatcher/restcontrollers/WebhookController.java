@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class WebhookController {
 
     private static final String BUCKETS = "buckets";
+    private static final String MESSAGES = "messages";
 
     @Autowired
     private ApplicationRepository applicationRepository;
@@ -54,7 +56,7 @@ public class WebhookController {
     /**
      * Register a new application (URL) returning its id
      */
-    @PostMapping(produces = {MediaTypes.HAL_JSON_VALUE})
+    @PostMapping(produces = { MediaTypes.HAL_JSON_VALUE })
     public ResponseEntity<Application> newApplication(@RequestBody @Valid ApplicationDto body) {
         Application applicationRequest = Application.builder() //
                 .name(body.getName()).url(body.getUrl()).online(true)//
@@ -67,13 +69,14 @@ public class WebhookController {
     /**
      * List registered applications [{id, URL},...]
      */
-    @GetMapping(produces = {MediaTypes.HAL_JSON_VALUE})
+    @GetMapping(produces = { MediaTypes.HAL_JSON_VALUE })
     public ResponseEntity<CollectionModel<Application>> listApplications() {
 
         List<Application> appResources = StreamSupport.stream(applicationRepository.findAll().spliterator(), false)
                 .map(app -> {
                     app.add(linkTo(methodOn(WebhookController.class).getApplication(app.getId())).withSelfRel());
                     app.add(linkTo(methodOn(WebhookController.class).listBuckets(app.getId())).withRel(BUCKETS));
+                    app.add(linkTo(methodOn(WebhookController.class).listMessages(app.getId())).withRel(MESSAGES));
                     return app;
                 }).collect(Collectors.toList());
         return ResponseEntity.ok(CollectionModel.of(appResources, //
@@ -82,20 +85,28 @@ public class WebhookController {
         ));
     }
 
-    @GetMapping(value = "/{appId}/buckets", produces = {MediaTypes.HAL_JSON_VALUE})
-    public CollectionModel<Bucket> listBuckets(@PathVariable("appId") String appId) {
+    @GetMapping(value = "/{appId}/buckets", produces = { MediaTypes.HAL_JSON_VALUE })
+    public ResponseEntity<CollectionModel<Bucket>> listBuckets(@PathVariable("appId") String appId) {
         // todo fix
-        return CollectionModel.of(Collections.emptyList());
+        return ResponseEntity.ok(CollectionModel.of(Collections.emptyList(), //
+                linkTo(methodOn(WebhookController.class).listBuckets(appId)).withSelfRel()));
     }
 
-    @GetMapping(value = "/{appId}/buckets/{bucketId}/messages", produces = {MediaTypes.HAL_JSON_VALUE})
+    @GetMapping(value = "/{appId}/messages", produces = { MediaTypes.HAL_JSON_VALUE })
+    public ResponseEntity<CollectionModel<Bucket>> listMessages(@PathVariable("appId") String appId) {
+        // todo fix
+        return ResponseEntity.ok(CollectionModel.of(Collections.emptyList(), //
+                linkTo(methodOn(WebhookController.class).listMessages(appId)).withSelfRel()));
+    }
+
+    @GetMapping(value = "/{appId}/buckets/{bucketId}/messages", produces = { MediaTypes.HAL_JSON_VALUE })
     public CollectionModel<Bucket> listMessagesByBucket(@PathVariable("appId") String appId,
             @PathVariable("bucketId") String bucketId) {
         // todo fix
         return CollectionModel.of(Collections.emptyList());
     }
 
-    @GetMapping(value = "/{appId}", produces = {MediaTypes.HAL_JSON_VALUE})
+    @GetMapping(value = "/{appId}", produces = { MediaTypes.HAL_JSON_VALUE })
     public Application getApplication(@PathVariable("appId") String appId) {
         Application app = getApp(appId);
         app.add(linkTo(methodOn(WebhookController.class).getApplication(app.getId())).withSelfRel());
@@ -118,10 +129,13 @@ public class WebhookController {
      * webhook dispatcher is kept as generic as possible, which means that it is up
      * to the poster to define the bucket that a message belongs to.
      */
-    @PostMapping(value="/{appId}/buckets/{bucketId}/messages/{messageType}", produces = {MediaTypes.HAL_JSON_VALUE})
+    @PostMapping(value = "/{appId}/messages/{messageType}", produces = { MediaTypes.HAL_JSON_VALUE })
     // todo validate params
-    public void postMessageToApplication(@PathVariable("appId") String appId, @PathVariable("bucketId") String bucketId,
-            @PathVariable("messageType") String messageType, @RequestBody String messageBody,
+    public void postMessageToApplication( //
+            @PathVariable("appId") String appId, //
+            @PathVariable("messageType") String messageType, @RequestBody String messageBody, //
+            // https://spring.io/guides/gs/rest-hateoas/#_create_a_resource_controller
+            @RequestParam(value = "bucket", defaultValue = "bucketless") String bucketId, //
             @RequestHeader("Content-Type") String mimeType) {
 
         Application application = getApplication(appId);
@@ -134,7 +148,7 @@ public class WebhookController {
     private Application getApp(String id) throws NoSuchElementException {
         Optional<Application> application = applicationRepository.findById(id);
         if (application.isEmpty()) {
-            throw new NoSuchElementException("Does not exist application with ID " + id);
+            throw new NoSuchElementException("Application with ID " + id + " doesn't exist");
         }
         return application.get();
     }
