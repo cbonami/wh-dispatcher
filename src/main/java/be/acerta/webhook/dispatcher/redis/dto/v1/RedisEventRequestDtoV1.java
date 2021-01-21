@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode
 public class RedisEventRequestDtoV1 implements Serializable {
     
+    private static final long serialVersionUID = 3336691896828174115L;
+
     @JsonProperty(required = true)
     @NotNull(message = "groupId mag niet leeg zijn")
     public String groupId;

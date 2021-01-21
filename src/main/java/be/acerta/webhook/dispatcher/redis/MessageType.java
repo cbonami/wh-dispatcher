@@ -4,7 +4,7 @@ import static java.util.Arrays.stream;
 
 import java.util.Optional;
 
-public enum EventType {
+public enum MessageType {
     // AANVRAAGPERIODE_AANGEMAAKT("AanvraagPeriodeAangemaakt"),
     // AANVRAAGPERIODE_GEWIJZIGD("AanvraagPeriodeGewijzigd"),
     // AANVRAAGPERIODE_VERWIJDERD("AanvraagPeriodeVerwijderd"),
@@ -56,7 +56,7 @@ public enum EventType {
 
     private final String naam;
 
-    EventType(String naam) {
+    MessageType(String naam) {
         this.naam = naam;
     }
 
@@ -64,7 +64,7 @@ public enum EventType {
         return naam;
     }
 
-    public static Optional<EventType> fromNaam(String naam) {
-        return stream(EventType.values()).filter(eventName -> eventName.naam.equalsIgnoreCase(naam)).findFirst();
+    public static Optional<MessageType> fromNaam(String naam) {
+        return stream(MessageType.values()).filter(eventName -> eventName.naam.equalsIgnoreCase(naam)).findFirst();
     }
 }

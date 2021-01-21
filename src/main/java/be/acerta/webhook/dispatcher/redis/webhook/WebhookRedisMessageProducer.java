@@ -21,7 +21,7 @@ public class WebhookRedisMessageProducer extends RedisMessageProducer {
         // todo apply hmac encryption
         final String id = UUID.randomUUID().toString();
         final String idempotencyKey = UUID.randomUUID().toString();
-        WebhookEventDto webhookEventDto = new WebhookEventDto(id, message, messageType,
+        WebhookMessageDto webhookEventDto = new WebhookMessageDto(id, message, messageType,
                 webhookUrl, idempotencyKey, mediaType.getType());
 
         super.doPublish(appName + "/" + bucketId, JsonUtil.objectToJson(webhookEventDto));

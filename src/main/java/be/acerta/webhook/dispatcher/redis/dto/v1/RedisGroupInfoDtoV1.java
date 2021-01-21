@@ -10,6 +10,8 @@ import lombok.ToString;
 @ToString
 public class RedisGroupInfoDtoV1 implements Serializable {
 
+    private static final long serialVersionUID = -729113616264985503L;
+
     public String id;
     public Integer aantalBuckets;
     public Set<String> bucketIds;

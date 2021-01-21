@@ -2,20 +2,14 @@ package be.acerta.webhook.dispatcher.redis.webhook;
 
 import java.io.Serializable;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Builder
-@EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WebhookEventDto implements Serializable {
+public class WebhookMessageDto implements Serializable {
 
     private String id;
     private String data;
@@ -23,7 +17,8 @@ public class WebhookEventDto implements Serializable {
     private String webhookUrl;
     private String mimeType;
 
-    // makes the message unique, so that the reciver can know if it has received the message before when it is being resubmitted
+    // makes the message unique, so that the reciver can know if it has received the
+    // message before when it is being resubmitted
     private String idempotencyKey;
 
 }

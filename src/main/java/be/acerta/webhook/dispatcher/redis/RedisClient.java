@@ -128,9 +128,14 @@ public abstract class RedisClient {
         return new JSONObject(message).get("id").toString();
     }
 
-    protected abstract String groupId();
+    /**
+     * @deprecated the group-concept should be factored out; we will only use this service
+     *       to dispatch webhooks, and for nothing else
+     */
+    @Deprecated
+    public abstract String groupId();
 
-    protected void cleanRedis() {
+    public void cleanRedis() {
         getProcessors().clear();
         getBuckets().clear();
         getAwaitRetries().clear();

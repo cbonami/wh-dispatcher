@@ -6,8 +6,8 @@ import java.util.Collections;
 
 import javax.inject.Inject;
 
-import be.acerta.webhook.dispatcher.redis.EventStrategy;
-import be.acerta.webhook.dispatcher.redis.EventType;
+import be.acerta.webhook.dispatcher.redis.MessageProcessingStrategy;
+import be.acerta.webhook.dispatcher.redis.MessageType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,13 +19,13 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @Slf4j
-public class WebhookEventStrategy implements EventStrategy {
+public class WebhookMessageStrategy implements MessageProcessingStrategy {
 
     @Inject
     private RestTemplate restTemplate;
 
     @Override
-    public boolean canHandle(EventType eventType) {
+    public boolean canHandle(MessageType eventType) {
         return eventType.equals(getEventType());
     }
 
@@ -33,7 +33,7 @@ public class WebhookEventStrategy implements EventStrategy {
     @Transactional
     public void handleEventMessageBody(String messageBody, String tracingCorrelationId) {
         log.debug("handleEventMessageBody - {} \n", tracingCorrelationId, messageBody);
-        WebhookEventDto webhookEventDto = jsonToObject(messageBody, WebhookEventDto.class);
+        WebhookMessageDto webhookEventDto = jsonToObject(messageBody, WebhookMessageDto.class);
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         // todo pass tracingCorrelationId
@@ -41,8 +41,8 @@ public class WebhookEventStrategy implements EventStrategy {
         restTemplate.exchange(webhookEventDto.getWebhookUrl(), HttpMethod.POST, entity, String.class);
     }
 
-    public EventType getEventType() {
-        return EventType.WEBHOOK;
+    public MessageType getEventType() {
+        return MessageType.WEBHOOK;
     }
 
 }

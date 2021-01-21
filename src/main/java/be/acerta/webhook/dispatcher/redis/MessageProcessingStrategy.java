@@ -1,10 +1,10 @@
 package be.acerta.webhook.dispatcher.redis;
 
-public interface EventStrategy {
+public interface MessageProcessingStrategy {
 
-    boolean canHandle(EventType eventType);
+    boolean canHandle(MessageType eventType);
 
     void handleEventMessageBody(String messageBody, String tracingCorrelationId);
 
-    EventType getEventType();
+    MessageType getEventType();
 }

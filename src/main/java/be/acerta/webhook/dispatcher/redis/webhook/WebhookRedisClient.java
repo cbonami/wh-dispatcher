@@ -5,11 +5,13 @@ import org.redisson.api.RedissonClient;
 
 public class WebhookRedisClient extends RedisClient {
 
+    public static final String WEBHOOK_REDIS_GROUP = "webhookRedisGroup";
+
     private final String groupId;
 
     public WebhookRedisClient(RedissonClient client) {
         super(client);
-        this.groupId = "webhookRedisGroup";
+        this.groupId = WEBHOOK_REDIS_GROUP;
     }
 
     @Override

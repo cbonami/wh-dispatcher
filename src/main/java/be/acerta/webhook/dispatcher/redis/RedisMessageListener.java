@@ -21,12 +21,12 @@ import org.redisson.api.map.event.EntryUpdatedListener;
 @Slf4j
 public abstract class RedisMessageListener {
 
-    private List<EventStrategy> eventStrategies;
+    private List<MessageProcessingStrategy> eventStrategies;
     private final String id;
     private RedisClient client;
 
     protected RedisMessageListener(RedisClient client,
-            List<EventStrategy> eventStrategies /* , ParameterService parameterService */) {
+            List<MessageProcessingStrategy> eventStrategies) {
         this.eventStrategies = eventStrategies;
         this.id = randomUUID().toString();
         this.client = client;
@@ -151,7 +151,7 @@ public abstract class RedisMessageListener {
         }
     }
 
-    private void handleEvent(String msg, EventStrategy eventStrategy) {
+    private void handleEvent(String msg, MessageProcessingStrategy eventStrategy) {
         eventStrategy.handleEventMessageBody(msg, getCorrelationId(msg));
     }
 
@@ -186,7 +186,7 @@ public abstract class RedisMessageListener {
         return nextRetryInterval < getRedisMaxRetryInterval();
     }
 
-    private Optional<EventStrategy> determineStrategy(EventType eventType) {
+    private Optional<MessageProcessingStrategy> determineStrategy(MessageType eventType) {
 
         return eventStrategies.stream().filter(eventStrategy -> eventStrategy.canHandle(eventType)).findFirst();
     }
@@ -209,7 +209,7 @@ public abstract class RedisMessageListener {
         return message.map(this::getId).orElse(null);
     }
 
-    protected abstract Optional<EventType> determineEventType(String msg);
+    protected abstract Optional<MessageType> determineEventType(String msg);
 
     protected abstract String getCorrelationId(String msg);
 

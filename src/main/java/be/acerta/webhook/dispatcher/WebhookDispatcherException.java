@@ -2,6 +2,8 @@ package be.acerta.webhook.dispatcher;
 
 public class WebhookDispatcherException extends RuntimeException {
 
+    private static final long serialVersionUID = 1232204968531145885L;
+
     public WebhookDispatcherException() {
     }
 

@@ -1,7 +1,7 @@
 package be.acerta.webhook.dispatcher.redis.webhook;
 
-import be.acerta.webhook.dispatcher.redis.EventType;
-import be.acerta.webhook.dispatcher.redis.EventStrategy;
+import be.acerta.webhook.dispatcher.redis.MessageType;
+import be.acerta.webhook.dispatcher.redis.MessageProcessingStrategy;
 import be.acerta.webhook.dispatcher.redis.RedisMessageListener;
 import org.json.JSONObject;
 
@@ -15,13 +15,13 @@ import java.util.Optional;
  */
 public class WebhookRedisMessageListener extends RedisMessageListener {
 
-    public WebhookRedisMessageListener(WebhookRedisClient client, List<EventStrategy> eventStrategies) {
+    public WebhookRedisMessageListener(WebhookRedisClient client, List<MessageProcessingStrategy> eventStrategies) {
         super(client, eventStrategies);
     }
 
     @Override
-    protected Optional<EventType> determineEventType(String message) {
-        return EventType.fromNaam(new JSONObject(message).getString("eventType"));
+    protected Optional<MessageType> determineEventType(String message) {
+        return MessageType.fromNaam(new JSONObject(message).getString("eventType"));
     }
 
     @Override
