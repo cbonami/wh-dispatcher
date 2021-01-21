@@ -37,7 +37,7 @@ public abstract class RedisMessageListener {
 
         // processorlock caches (zie producer)
         // listener en lock systeem zit hier
-        // groupId is unieke naam voor integratie-stroom; bv 'appX_2_appY'
+        // groupId is unieke naam voor unieke integratie-stroom die door deze dispatcher service wordt bediend; bv 'appX_2_appY'
         log.info("--- Adding listeners for group id {} ---", client.groupId());
         client.getProcessors().addListener((EntryCreatedListener<String, String>) e -> processMessage(e.getKey()));
         client.getProcessors().addListener((EntryUpdatedListener<String, String>) e -> processMessage(e.getKey()));

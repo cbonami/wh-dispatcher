@@ -1,8 +1,8 @@
 package be.acerta.webhook.dispatcher.restcontrollers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.afford;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.afford;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,13 +15,17 @@ import javax.validation.Valid;
 
 import be.acerta.webhook.dispatcher.model.Application;
 import be.acerta.webhook.dispatcher.model.Bucket;
+import be.acerta.webhook.dispatcher.model.Message;
 import be.acerta.webhook.dispatcher.persistence.ApplicationRepository;
+import be.acerta.webhook.dispatcher.redis.RedisClient;
 import be.acerta.webhook.dispatcher.redis.webhook.WebhookRedisMessageProducer;
-import be.acerta.webhook.dispatcher.vo.ApplicationDto;
+import be.acerta.webhook.dispatcher.restcontrollers.dto.NewApplicationDto;
+import be.acerta.webhook.dispatcher.restcontrollers.dto.NewMessageDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
@@ -53,11 +57,14 @@ public class WebhookController {
     @Autowired
     private WebhookRedisMessageProducer webhookRedisMessageProducer;
 
+    @Autowired
+    private RedisClient redisClient;
+
     /**
      * Register a new application (URL) returning its id
      */
     @PostMapping(produces = { MediaTypes.HAL_JSON_VALUE })
-    public ResponseEntity<Application> newApplication(@RequestBody @Valid ApplicationDto body) {
+    public ResponseEntity<Application> newApplication(@RequestBody @Valid NewApplicationDto body) {
         Application applicationRequest = Application.builder() //
                 .name(body.getName()).url(body.getUrl()).online(true)//
                 .build();
@@ -82,11 +89,19 @@ public class WebhookController {
         return ResponseEntity.ok(CollectionModel.of(appResources, //
                 linkTo(methodOn(WebhookController.class).listApplications()).withSelfRel() //
                         .andAffordance(afford(methodOn(WebhookController.class).newApplication(null))) //
-        ));
+                        .andAffordance(
+                                afford(methodOn(WebhookController.class).newMessage(null, null, null, null)))));
     }
 
+    /**
+     * Returns all current bucketIds for an app.
+     * 
+     * @param appId
+     * @return
+     */
     @GetMapping(value = "/{appId}/buckets", produces = { MediaTypes.HAL_JSON_VALUE })
-    public ResponseEntity<CollectionModel<Bucket>> listBuckets(@PathVariable("appId") String appId) {
+    public ResponseEntity<CollectionModel<EntityModel<String>>> listBuckets(@PathVariable("appId") String appId) {
+
         // todo fix
         return ResponseEntity.ok(CollectionModel.of(Collections.emptyList(), //
                 linkTo(methodOn(WebhookController.class).listBuckets(appId)).withSelfRel()));
@@ -94,24 +109,37 @@ public class WebhookController {
 
     @GetMapping(value = "/{appId}/messages", produces = { MediaTypes.HAL_JSON_VALUE })
     public ResponseEntity<CollectionModel<Bucket>> listMessages(@PathVariable("appId") String appId) {
+        List<Bucket> bucketResources = StreamSupport.stream(this.redisClient.getBuckets().keySet().spliterator(), false)//
+                .map(k -> {
+                    // todo
+                    final Bucket bucket = Bucket.builder().id(k).build();
+                    bucket.add(
+                            linkTo(methodOn(WebhookController.class).getBucket(appId, bucket.getId())).withSelfRel());
+                    return bucket;
+                }).collect(Collectors.toList());
         // todo fix
-        return ResponseEntity.ok(CollectionModel.of(Collections.emptyList(), //
+        return ResponseEntity.ok(CollectionModel.of(bucketResources, //
                 linkTo(methodOn(WebhookController.class).listMessages(appId)).withSelfRel()));
     }
 
     @GetMapping(value = "/{appId}/buckets/{bucketId}/messages", produces = { MediaTypes.HAL_JSON_VALUE })
-    public CollectionModel<Bucket> listMessagesByBucket(@PathVariable("appId") String appId,
+    public ResponseEntity<Bucket> getBucket(@PathVariable("appId") String appId,
             @PathVariable("bucketId") String bucketId) {
         // todo fix
-        return CollectionModel.of(Collections.emptyList());
+        // return ResponseEntity.ok(CollectionModel.of(Collections.emptyList(), //
+        // linkTo(methodOn(WebhookController.class).getBucket(appId,
+        // bucketId)).withSelfRel()));
+
+        return ResponseEntity.ok(Bucket.builder().id(bucketId).build());
     }
 
     @GetMapping(value = "/{appId}", produces = { MediaTypes.HAL_JSON_VALUE })
-    public Application getApplication(@PathVariable("appId") String appId) {
-        Application app = getApp(appId);
-        app.add(linkTo(methodOn(WebhookController.class).getApplication(app.getId())).withSelfRel());
-        app.add(linkTo(methodOn(WebhookController.class).listBuckets(app.getId())).withRel(BUCKETS));
-        return app;
+    public ResponseEntity<Application> getApplication(@PathVariable("appId") String appId) {
+        return applicationRepository.findById(appId).map(app -> {
+            app.add(linkTo(methodOn(WebhookController.class).getApplication(app.getId())).withSelfRel());
+            app.add(linkTo(methodOn(WebhookController.class).listBuckets(app.getId())).withRel(BUCKETS));
+            return ResponseEntity.ok(app);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -129,20 +157,22 @@ public class WebhookController {
      * webhook dispatcher is kept as generic as possible, which means that it is up
      * to the poster to define the bucket that a message belongs to.
      */
-    @PostMapping(value = "/{appId}/messages/{messageType}", produces = { MediaTypes.HAL_JSON_VALUE })
+    @PostMapping(value = "/{appId}/messages", produces = { MediaTypes.HAL_JSON_VALUE })
     // todo validate params
-    public void postMessageToApplication( //
+    // {"type":"Foo", "body":"bar"}
+    public ResponseEntity<Message> newMessage( //
             @PathVariable("appId") String appId, //
-            @PathVariable("messageType") String messageType, @RequestBody String messageBody, //
+            @RequestBody NewMessageDto message, //
             // https://spring.io/guides/gs/rest-hateoas/#_create_a_resource_controller
-            @RequestParam(value = "bucket", defaultValue = "bucketless") String bucketId, //
+            @RequestParam(value = "bucket", defaultValue = "no") String bucketId, //
             @RequestHeader("Content-Type") String mimeType) {
 
-        Application application = getApplication(appId);
-        log.debug("Publishing Message {} for existing Application {}", messageBody, application.getName());
-        this.webhookRedisMessageProducer.publish(application.getName(), application.getUrl(), bucketId, "", messageType,
-                messageBody,
+        Application application = getApp(appId);
+        log.debug("Publishing Message {} for existing Application {}", message.toString(), application.getName());
+        Message msg = this.webhookRedisMessageProducer.publish(application.getName(), application.getUrl(), bucketId,
+                "", message.getType(), message.getBody(),
                 StringUtils.isEmpty(mimeType) ? MediaType.APPLICATION_JSON : MimeTypeUtils.parseMimeType(mimeType));
+        return ResponseEntity.ok(msg);
     }
 
     private Application getApp(String id) throws NoSuchElementException {

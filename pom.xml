@@ -20,6 +20,7 @@
 		<java.version>11</java.version>
         <embedded-redis.version>0.6</embedded-redis.version>
         <nosqlunit-redis.version>1.0.0</nosqlunit-redis.version>
+		<springdoc.version>1.5.2</springdoc.version>
     </properties>
 
 	<dependencies>
@@ -60,11 +61,18 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- SpringDoc -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.5.2</version>
+            <version>${springdoc.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-data-rest</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency> 
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -129,10 +137,15 @@
 
 	<build>
 		<plugins>
+
+			<!-- https://github.com/springdoc/springdoc-openapi-maven-plugin -->
+			<!-- https://github.com/OAI/OpenAPI-Specification/blob/master/IMPLEMENTATIONS.md#user-interfaces -->
+			<!-- https://www.baeldung.com/spring-rest-openapi-documentation -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -140,8 +153,47 @@
 						</exclude>
 					</excludes>
 				</configuration>
+				<executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<apiDocsUrl>http://localhost:8080/v3/api-docs</apiDocsUrl>
+					<outputFileName>openapi.json</outputFileName>
+					<outputDir>${project.build.directory}</outputDir>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
+
+	<profiles>
+        <profile>
+            <id>integration</id>
+        </profile>
+    </profiles>
 
 </project>

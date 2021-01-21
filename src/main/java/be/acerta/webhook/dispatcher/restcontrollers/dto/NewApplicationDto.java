@@ -1,10 +1,11 @@
-package be.acerta.webhook.dispatcher.vo;
+package be.acerta.webhook.dispatcher.restcontrollers.dto;
 
 import lombok.*;
 
 @Data
 @Builder
-public class ApplicationDto {
+@ToString
+public class NewApplicationDto {
 
     @NonNull
     private String url;

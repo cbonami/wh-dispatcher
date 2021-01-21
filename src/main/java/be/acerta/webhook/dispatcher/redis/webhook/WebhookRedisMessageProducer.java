@@ -3,6 +3,7 @@ package be.acerta.webhook.dispatcher.redis.webhook;
 import java.util.UUID;
 
 import be.acerta.webhook.dispatcher.JsonUtil;
+import be.acerta.webhook.dispatcher.model.Message;
 import be.acerta.webhook.dispatcher.redis.RedisClient;
 import be.acerta.webhook.dispatcher.redis.RedisMessageProducer;
 import org.springframework.util.MimeType;
@@ -13,15 +14,19 @@ public class WebhookRedisMessageProducer extends RedisMessageProducer {
         super(client);
     }
 
-    public void publish(String appName, String webhookUrl, String queueId, String hmac, String messageType,
+    public Message publish(String appName, String webhookUrl, String bucketId, String hmac, String messageType,
             String message, MimeType mediaType) {
 
         // put json data in an envelope
         // todo apply hmac encryption
-        WebhookEventDto webhookEventDto = new WebhookEventDto(UUID.randomUUID().toString(), message, messageType,
-                webhookUrl, UUID.randomUUID().toString(), mediaType.getType());
+        final String id = UUID.randomUUID().toString();
+        final String idempotencyKey = UUID.randomUUID().toString();
+        WebhookEventDto webhookEventDto = new WebhookEventDto(id, message, messageType,
+                webhookUrl, idempotencyKey, mediaType.getType());
 
-        super.doPublish(appName + "/" + queueId, JsonUtil.objectToJson(webhookEventDto));
+        super.doPublish(appName + "/" + bucketId, JsonUtil.objectToJson(webhookEventDto));
+
+        return Message.builder().id(idempotencyKey).idempotencyKey(idempotencyKey).build();
     }
 
 }
