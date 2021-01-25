@@ -1,7 +1,7 @@
 package be.acerta.webhook.dispatcher.redis.maintenance;
 
-import static be.acerta.webhook.dispatcher.redis.dto.v1.RedisGroupInfoDtoV1.redisGroupInfoDto;
-import static be.acerta.webhook.dispatcher.redis.dto.v1.RedisInfoDtoV1.redisStatusDto;
+import static be.acerta.webhook.dispatcher.redis.maintenance.dto.RedisGroupInfoDto.redisGroupInfoDto;
+import static be.acerta.webhook.dispatcher.redis.maintenance.dto.RedisInfoDto.redisStatusDto;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -10,8 +10,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import be.acerta.webhook.dispatcher.redis.RedisClient;
-import be.acerta.webhook.dispatcher.redis.dto.v1.RedisGroupInfoDtoV1;
-import be.acerta.webhook.dispatcher.redis.dto.v1.RedisInfoDtoV1;
+import be.acerta.webhook.dispatcher.redis.maintenance.dto.RedisGroupInfoDto;
+import be.acerta.webhook.dispatcher.redis.maintenance.dto.RedisInfoDto;
 
 @Named
 public class RedisMaintenanceServiceImpl implements RedisMaintenanceService {
@@ -20,7 +20,7 @@ public class RedisMaintenanceServiceImpl implements RedisMaintenanceService {
     private List<RedisClient> redisClients;
 
     @Override
-    public void clear(BatchType batchType) {
+    public void clear() {
         redisClients.forEach(RedisClient::cleanRedis);
     }
 
@@ -56,11 +56,11 @@ public class RedisMaintenanceServiceImpl implements RedisMaintenanceService {
     }
 
     @Override
-    public RedisInfoDtoV1 getRedisInfo() {
+    public RedisInfoDto getRedisInfo() {
         return redisStatusDto().withRedisStatus(redisClients.stream().map(this::getRedisGroupInfo).collect(toList()));
     }
 
-    private RedisGroupInfoDtoV1 getRedisGroupInfo(RedisClient redisClient) {
+    private RedisGroupInfoDto getRedisGroupInfo(RedisClient redisClient) {
         return redisGroupInfoDto().withId(redisClient.groupId())
                 .withAantalBuckets(redisClient.getBuckets().keySet().size())
                 .withBucketIds(redisClient.getBuckets().keySet())

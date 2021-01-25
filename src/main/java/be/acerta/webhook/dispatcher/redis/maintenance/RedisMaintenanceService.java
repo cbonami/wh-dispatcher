@@ -1,6 +1,6 @@
 package be.acerta.webhook.dispatcher.redis.maintenance;
 
-import be.acerta.webhook.dispatcher.redis.dto.v1.RedisInfoDtoV1;
+import be.acerta.webhook.dispatcher.redis.maintenance.dto.RedisInfoDto;
 
 /**
  * Utility service voor maintenance redenen.
@@ -9,9 +9,9 @@ import be.acerta.webhook.dispatcher.redis.dto.v1.RedisInfoDtoV1;
  */
 public interface RedisMaintenanceService {
 
-    void clear(BatchType batchType);
+    void clear();
 
-    RedisInfoDtoV1 getRedisInfo();
+    RedisInfoDto getRedisInfo();
 
     void triggerProcessing(String groupId, String bucketId);
 

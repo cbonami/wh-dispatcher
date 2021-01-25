@@ -66,7 +66,7 @@ public abstract class RedisMessageListener {
                     String firstMessageId = determineFirstMessageId(bucketId);
                     messageId.set(firstMessageId);
                     log.info("Processing message id {} for bucket id {}", firstMessageId, bucketId);
-                    determineEventType(msg).ifPresent(eventType -> {
+                    determineMessageType(msg).ifPresent(eventType -> {
                         log.info("Determined event type {} for message id {} and bucket id {}", eventType,
                                 firstMessageId, bucketId);
 
@@ -75,7 +75,8 @@ public abstract class RedisMessageListener {
                         determineStrategy(eventType).ifPresent(eventStrategy -> {
                             log.info("Determined event strategy {} for message id {} and bucket id {}",
                                     eventStrategy, firstMessageId, bucketId);
-                            handleEvent(msg, eventStrategy);
+                            //processMessage(msg, eventStrategy);
+                            eventStrategy.processMessage(msg);
                         });
                     });
                     client.removeMessage(bucketId, msg);
@@ -151,12 +152,9 @@ public abstract class RedisMessageListener {
         }
     }
 
-    private void handleEvent(String msg, MessageProcessingStrategy eventStrategy) {
-        eventStrategy.handleEventMessageBody(msg, getCorrelationId(msg));
-    }
 
     private RLock awaitRetryAndReleaseProcessor(String bucketId, String msg, Exception ex) {
-        log.error(format("Processing of event with correlationId[%s] has failed", getCorrelationId(msg)), ex);
+        log.error(format("Processing of message has failed; message=[%s]", msg), ex);
         RLock awaitRetryLock = client.getAwaitRetryLock(bucketId);
         // semafoor, omdat we vanalles moeten berekenen hieronder
         awaitRetryLock.lock();
@@ -167,8 +165,8 @@ public abstract class RedisMessageListener {
             nextRetryInterval = NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR;
         }
         if (log.isErrorEnabled())
-            log.error(format("Processing of event with correlationId[%s] has failed. Next attempt in %s secs",
-                    getCorrelationId(msg), nextRetryInterval), ex);
+            log.error(format("Processing of message [%s] has failed. Next attempt in %s secs",
+                    msg, nextRetryInterval), ex);
         client.getAwaitRetries().fastPut(bucketId, nextRetryInterval, nextRetryInterval, SECONDS);
 
         if (isKleinerDanRedisMaxRetryInterval(nextRetryInterval)) {
@@ -188,7 +186,7 @@ public abstract class RedisMessageListener {
 
     private Optional<MessageProcessingStrategy> determineStrategy(MessageType eventType) {
 
-        return eventStrategies.stream().filter(eventStrategy -> eventStrategy.canHandle(eventType)).findFirst();
+        return eventStrategies.stream().filter(eventStrategy -> eventStrategy.canProcess(eventType)).findFirst();
     }
 
     private void unassignExistingListeners() {
@@ -209,9 +207,7 @@ public abstract class RedisMessageListener {
         return message.map(this::getId).orElse(null);
     }
 
-    protected abstract Optional<MessageType> determineEventType(String msg);
-
-    protected abstract String getCorrelationId(String msg);
+    protected abstract Optional<MessageType> determineMessageType(String msg);
 
     protected abstract Long getRedisMaxRetryInterval();
 }

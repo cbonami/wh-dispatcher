@@ -1,19 +1,13 @@
-#sudo: required
 language: java
+jdk:
+    - openjdk11
 
 services:
     - redis-server
 
-# before_install:
-#     - docker ps -a
 before_install:
     - chmod +x mvnw
 
 install: echo "My projects will be configurable in an awesomical way ;)."
 
 script: ./mvnw spring-boot:build-image
-# run: docker run -it -p8080:8080 demo:0.0.1-SNAPSHOT
-
-jdk:
-    - openjdk11
-

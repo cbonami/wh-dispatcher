@@ -17,8 +17,8 @@ public class WebhookAdapterConfig {
 
     @Bean
     public WebhookRedisMessageListener webhookRedisMessageListener(WebhookRedisClient webhookRedisClient,
-            List<MessageProcessingStrategy> eventStrategies) {
-        return new WebhookRedisMessageListener(webhookRedisClient, eventStrategies);
+            List<MessageProcessingStrategy> messageProcessingStrategies) {
+        return new WebhookRedisMessageListener(webhookRedisClient, messageProcessingStrategies);
     }
 
     @Bean
