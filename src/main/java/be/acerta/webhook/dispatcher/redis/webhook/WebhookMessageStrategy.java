@@ -1,6 +1,6 @@
 package be.acerta.webhook.dispatcher.redis.webhook;
 
-import static be.acerta.webhook.dispatcher.JsonUtil.jsonToObject;
+import static be.acerta.webhook.dispatcher.redis.JsonUtil.jsonToObject;
 
 import java.util.Collections;
 
@@ -44,7 +44,7 @@ public class WebhookMessageStrategy implements MessageProcessingStrategy {
     }
 
     public MessageType getProcessedMessageType() {
-        return MessageType.WEBHOOK;
+        return MessageType.WEBHOOK_V1;
     }
 
 }

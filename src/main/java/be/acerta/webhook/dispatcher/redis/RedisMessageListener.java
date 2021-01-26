@@ -1,5 +1,6 @@
 package be.acerta.webhook.dispatcher.redis;
 
+import static be.acerta.webhook.dispatcher.LazyString.lazy;
 import static be.acerta.webhook.dispatcher.redis.RedisClient.NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR;
 import static be.acerta.webhook.dispatcher.redis.RedisClient.UNASSIGNED_KEY;
 import static java.lang.String.format;
@@ -8,6 +9,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -25,8 +27,7 @@ public abstract class RedisMessageListener {
     private final String id;
     private RedisClient client;
 
-    protected RedisMessageListener(RedisClient client,
-            List<MessageProcessingStrategy> eventStrategies) {
+    protected RedisMessageListener(RedisClient client, List<MessageProcessingStrategy> eventStrategies) {
         this.eventStrategies = eventStrategies;
         this.id = randomUUID().toString();
         this.client = client;
@@ -37,7 +38,8 @@ public abstract class RedisMessageListener {
 
         // processorlock caches (zie producer)
         // listener en lock systeem zit hier
-        // groupId is unieke naam voor unieke integratie-stroom die door deze dispatcher service wordt bediend; bv 'appX_2_appY'
+        // groupId is unieke naam voor unieke integratie-stroom die door deze dispatcher
+        // service wordt bediend; bv 'appX_2_appY'
         log.info("--- Adding listeners for group id {} ---", client.groupId());
         client.getProcessors().addListener((EntryCreatedListener<String, String>) e -> processMessage(e.getKey()));
         client.getProcessors().addListener((EntryUpdatedListener<String, String>) e -> processMessage(e.getKey()));
@@ -66,18 +68,23 @@ public abstract class RedisMessageListener {
                     String firstMessageId = determineFirstMessageId(bucketId);
                     messageId.set(firstMessageId);
                     log.info("Processing message id {} for bucket id {}", firstMessageId, bucketId);
-                    determineMessageType(msg).ifPresent(eventType -> {
-                        log.info("Determined event type {} for message id {} and bucket id {}", eventType,
+                    determineMessageType(msg).ifPresentOrElse(messageType -> {
+                        log.info("Determined event type {} for message id {} and bucket id {}", messageType,
                                 firstMessageId, bucketId);
 
                         // strategy pattern om te zien wat er moet gebeuren
-                        // eventType bepaalt gekozen strategy
-                        determineStrategy(eventType).ifPresent(eventStrategy -> {
-                            log.info("Determined event strategy {} for message id {} and bucket id {}",
-                                    eventStrategy, firstMessageId, bucketId);
-                            //processMessage(msg, eventStrategy);
-                            eventStrategy.processMessage(msg);
+                        // messageType bepaalt gekozen strategy
+                        determineStrategy(messageType).ifPresentOrElse(messageStrategy -> {
+                            log.info("Determined message strategy {} for message id {} and bucket id {}",
+                                    messageStrategy, firstMessageId, bucketId);
+                            messageStrategy.processMessage(msg);
+                        }, () -> {
+                            throw new NoSuchElementException(String.format(
+                                    "No strategy could be found for messageType in msg %s", lazy(msg::toString)));
                         });
+                    }, () -> {
+                        throw new NoSuchElementException(String.format(
+                                "No known messageType could be found/determined for msg %s", lazy(msg::toString)));
                     });
                     client.removeMessage(bucketId, msg);
                 } catch (Exception ex) {
@@ -101,11 +108,9 @@ public abstract class RedisMessageListener {
         } catch (Exception ex) {
             String actualMessageId = messageId.get();
             if (actualMessageId != null) {
-                log.error(format("Process message id %s for bucket id %s has failed", actualMessageId, bucketId),
-                        ex);
+                log.error(format("Process message id %s for bucket id %s has failed", actualMessageId, bucketId), ex);
             } else {
-                log.error(format("Process message for bucket id %s has failed, message id not found", bucketId),
-                        ex);
+                log.error(format("Process message for bucket id %s has failed, message id not found", bucketId), ex);
             }
         } finally {
             // zeker zijn dat de lock op processor cache wordt geunlocked
@@ -152,7 +157,6 @@ public abstract class RedisMessageListener {
         }
     }
 
-
     private RLock awaitRetryAndReleaseProcessor(String bucketId, String msg, Exception ex) {
         log.error(format("Processing of message has failed; message=[%s]", msg), ex);
         RLock awaitRetryLock = client.getAwaitRetryLock(bucketId);
@@ -165,8 +169,8 @@ public abstract class RedisMessageListener {
             nextRetryInterval = NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR;
         }
         if (log.isErrorEnabled())
-            log.error(format("Processing of message [%s] has failed. Next attempt in %s secs",
-                    msg, nextRetryInterval), ex);
+            log.error(format("Processing of message [%s] has failed. Next attempt in %s secs", msg, nextRetryInterval),
+                    ex);
         client.getAwaitRetries().fastPut(bucketId, nextRetryInterval, nextRetryInterval, SECONDS);
 
         if (isKleinerDanRedisMaxRetryInterval(nextRetryInterval)) {

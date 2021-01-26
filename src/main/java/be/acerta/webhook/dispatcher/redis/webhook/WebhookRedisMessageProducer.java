@@ -1,7 +1,7 @@
 package be.acerta.webhook.dispatcher.redis.webhook;
 
-import be.acerta.webhook.dispatcher.JsonUtil;
 import be.acerta.webhook.dispatcher.model.Message;
+import be.acerta.webhook.dispatcher.redis.JsonUtil;
 import be.acerta.webhook.dispatcher.redis.RedisClient;
 import be.acerta.webhook.dispatcher.redis.RedisMessageProducer;
 

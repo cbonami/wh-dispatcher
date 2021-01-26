@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping(RedisMaintenanceController.REDIS_URL)
+//@RestController
+//@RequestMapping(RedisMaintenanceController.REDIS_URL)
 public class RedisMaintenanceController {
 
     public static final String REDIS_URL = "/redis";

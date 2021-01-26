@@ -5,9 +5,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.ForwardedHeaderFilter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Supply X-FORWARDED-* HEADERS.
@@ -22,6 +24,16 @@ public class WebConfig {
         result.setOrder(0);
         return result;
     }
+
+
+    // https://www.novatec-gmbh.de/en/blog/including-hal-browser-spring-boot-without-using-spring-data-rest/
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        if (!registry.hasMappingForPattern("/browser/**")) {
+            registry.addResourceHandler("/browser/**").addResourceLocations("classpath:/META-INF/resources/webjars/hal-browser/ad9b865/");
+        }
+	}
+
 
     @Bean
     public RestTemplate restTemplate() {

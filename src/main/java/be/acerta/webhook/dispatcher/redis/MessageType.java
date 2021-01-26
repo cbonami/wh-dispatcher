@@ -50,9 +50,8 @@ public enum MessageType {
     // APPOINTMENT_CREATED("AppointmentCreated", false),
     // STARTUP_CREATIE("StartupCreatie", false);
 
-    WEBHOOK("webhook"),
-    FOO("foo"),
-    BAR("bar");
+    WEBHOOK_V1("webhook_v1"),
+    WEBHOOK_V2("webhook_v2");
 
     private final String naam;
 

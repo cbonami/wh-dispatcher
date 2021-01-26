@@ -42,4 +42,5 @@ MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 * https://derkoe.dev/blog/development-environment-in-wsl2/
 * https://partlycloudy.blog/2020/06/05/wsl2-making-windows-10-the-perfect-dev-machine/
 * https://kb.objectrocket.com/redis/run-redis-with-docker-compose-1055
+* https://www.novatec-gmbh.de/en/blog/including-hal-browser-spring-boot-without-using-spring-data-rest/
 

@@ -26,7 +26,7 @@ By default, Redis runs on port 6379.
 ./mvnw spring-boot:run
 ```
 
-* [http://localhost:8080/l](http://localhost:8080/) -> [HAL Explorer](https://github.com/toedter/hal-explorer); use this to TRAVERSE the api
+* [http://localhost:8080/browser/browser.html](http://localhost:8080/browser/browser.html) -> [HAL Explorer](https://github.com/toedter/hal-explorer); use this to TRAVERSE the api
 * [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) -> Swagger Docs UI
 * [http://localhost:8080/v3/api-docs/](http://localhost:8080/v3/api-docs/) -> Open API 3.0 JSON description.
 

@@ -4,7 +4,6 @@ import static java.util.Objects.isNull;
 
 import java.util.UUID;
 
-import be.acerta.webhook.dispatcher.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.redisson.api.RLock;
