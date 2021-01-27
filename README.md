@@ -20,6 +20,11 @@ Simply install Redis as a windows service on your local W10 machine. See instruc
 
 By default, Redis runs on port 6379.
 
+## Load test
+
+```bash
+./mvnw gatling:test -Dsimulation=LoadTest -Dduration=3600
+```
 ## Run app
 
 ```bash
@@ -32,7 +37,7 @@ By default, Redis runs on port 6379.
 
 ## Use app
 
-Perform some HTTP-request via curl, or use the examples in the [.http](src/test/resources/test.http)-files. Both IntelliJ and vscode (via an extension) can interprete these standard .http files.  
+Perform some HTTP-request via curl, postman, etc or just use the [HAL browser]() or the [Swagger UI](). 
 
 ### Delete application by ID
 

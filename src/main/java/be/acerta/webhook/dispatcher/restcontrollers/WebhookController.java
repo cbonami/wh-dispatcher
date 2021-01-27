@@ -30,7 +30,6 @@ import be.acerta.webhook.dispatcher.redis.webhook.WebhookRedisClient;
 import be.acerta.webhook.dispatcher.redis.webhook.WebhookRedisMessageProducer;
 import be.acerta.webhook.dispatcher.restcontrollers.dto.NewApplicationDto;
 import be.acerta.webhook.dispatcher.restcontrollers.dto.NewMessageDto;
-import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,6 +46,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -181,25 +181,22 @@ public class WebhookController {
                 return ResponseEntity.ok(Bucket.builder().id(bucketId).build());
         }
 
-        /**
-         * Delete an application by id.
-         */
+        @Operation(//
+                        summary = "Delete application by id.", //
+                        description = "Deletes an application and deregisters all its webhooks.", //
+                        tags = { "application" })
         @DeleteMapping(value = "/api" + APPLICATIONS_URL + "/{appId}")
         public ResponseEntity<String> deleteApplication(@PathVariable("appId") String appId) {
                 return applicationRepository.findById(appId).map(app -> {
                         applicationRepository.delete(app);
+                        // todo deregister webhooks
                         return ResponseEntity.ok(app.getId());
                 }).orElse(ResponseEntity.notFound().build());
         }
 
-        /**
-         * POST a message to this application; used during testing. Plz note that the
-         * webhook dispatcher is kept as generic as possible, which means that it is up
-         * to the poster to define the bucket that a message belongs to.
-         */
         @Operation(//
                         summary = "POST a message to specified application over its registered webhook.", //
-                        description = "Only useful during testing of the webhook interface of the destination application", //
+                        description = "Only useful during testing of the webhook interface of the destination application. Plz note that the webhook dispatcher is kept as generic as possible, which means that it is up to the poster to define the bucket that a message belongs to.", //
                         tags = { "message" })
         @PostMapping(value = "/api" + APPLICATIONS_URL + "/{appId}/messages", produces = { HAL_JSON_VALUE })
         // todo validate params
@@ -231,7 +228,7 @@ public class WebhookController {
                         Message msg = this.webhookRedisMessageProducer.publish(application.getName(),
                                         bucketId.equals("*") ? UUID.randomUUID().toString() : bucketId,
                                         webhookMessageDto);
-                        return ResponseEntity.ok(msg);
+                        return new ResponseEntity<>(msg, HttpStatus.CREATED);
                 }).orElse(ResponseEntity.notFound().build());
 
         }
@@ -259,12 +256,13 @@ public class WebhookController {
                 EmptyResource api = EmptyResource.builder().build();
                 api.add(linkTo(methodOn(WebhookController.class).getEndpoints()).withSelfRel());
                 api.add(linkTo(methodOn(WebhookController.class).getInfo()).withRel("some general statistics"));
-                api.add(linkTo(methodOn(WebhookController.class).isProcessorLocked(null)).withRel("is processor locked?"));
-                api.add(linkTo(methodOn(WebhookController.class).clear()).withRel("clear all buckets and control lists"));
-        
+                api.add(linkTo(methodOn(WebhookController.class).isProcessorLocked(null))
+                                .withRel("is processor locked?"));
+                api.add(linkTo(methodOn(WebhookController.class).clear())
+                                .withRel("clear all buckets and control lists"));
+
                 return ResponseEntity.ok(api);
         }
-
 
         @GetMapping(produces = HAL_JSON_VALUE, value = "/api" + REDIS_URL + "/info")
         public ResponseEntity<RedisInfoDto> getInfo() {

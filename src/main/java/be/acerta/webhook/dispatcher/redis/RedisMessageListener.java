@@ -67,15 +67,15 @@ public abstract class RedisMessageListener {
                 try {
                     String firstMessageId = determineFirstMessageId(bucketId);
                     messageId.set(firstMessageId);
-                    log.info("Processing message id {} for bucket id {}", firstMessageId, bucketId);
+                    log.debug("Processing message id {} for bucket id {}", firstMessageId, bucketId);
                     determineMessageType(msg).ifPresentOrElse(messageType -> {
-                        log.info("Determined event type {} for message id {} and bucket id {}", messageType,
+                        log.debug("Determined event type {} for message id {} and bucket id {}", messageType,
                                 firstMessageId, bucketId);
 
                         // strategy pattern om te zien wat er moet gebeuren
                         // messageType bepaalt gekozen strategy
                         determineStrategy(messageType).ifPresentOrElse(messageStrategy -> {
-                            log.info("Determined message strategy {} for message id {} and bucket id {}",
+                            log.debug("Determined message strategy {} for message id {} and bucket id {}",
                                     messageStrategy, firstMessageId, bucketId);
                             messageStrategy.processMessage(msg);
                         }, () -> {
@@ -84,9 +84,12 @@ public abstract class RedisMessageListener {
                         });
                     }, () -> {
                         throw new NoSuchElementException(String.format(
-                                "No known messageType could be found/determined for msg %s", lazy(msg::toString)));
+                                "No known messageType could be distilled from msg %s", lazy(msg::toString)));
                     });
                     client.removeMessage(bucketId, msg);
+                } catch (NoSuchElementException ex) {
+                    // if messages were sent that we cannot process, we simply disregard that and continue
+                    throw ex;
                 } catch (Exception ex) {
                     // lock op await retry zodat niemand anders daarmee kan bezig zijn
                     // bereken interval
