@@ -85,7 +85,7 @@ Start coding :)
 
 ## Option 2: use a dev container
 
-> Note: option 2 is preferred as it standardizes the IDE for all developers and is 100% discardable i.e. doesn't 'pollute' the Ubuntu subsystem
+> Note: preferred option because it standardizes the IDE for all developers and is 100% discardable i.e. doesn't 'pollute' the Ubuntu subsystem
 
 ![](./img/architecture-containers.png)
 
@@ -129,7 +129,10 @@ vscode ➜ /workspace (master ✗) $ mvn spring-boot:run
 
 Point your browser to [http://localhost:8080/](http://localhost:8080/). The HAL Explorer will load where you can inspect and call the REST api.
 
-> Note: spring devtools is also started, so there will be 2 ports forwarded to your local host (8080, x) where x is a random port like 35729.
+Spring devtools is also started, so there will be 2 ports forwarded to your local host (8080, x) where x is a random port like 35729.
+```redis-cli``` is also pre-installed in the dev container.
+
+> Note: when you changed the [.devcontainer/Dockerfile](.devcontainer/Dockerfile) to 'apt install' some additonal software, you need to rebuild the container (Ctrl + Shift + P > Remote-Containers: Rebuild Container)
 
 ## Installed vscode plugins
 
@@ -141,3 +144,7 @@ These plugins will be automatically installed at dev container startup:
 * [rest-client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 * [vscode-pull-request-github](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)
 * [SonarSource.sonarlint-vscode](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode)
+
+## Some other info
+
+* https://blog.feabhas.com/2021/01/vscode-dev-containers-and-docker-moving-software-development-forward/

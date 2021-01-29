@@ -4,27 +4,14 @@ Spring Boot application that
 - offers to event-subscribers an HTTP-API where they can register a webhook (i.e. an endpoint URL in the subscriber's api)
 - POSTs event-payloads to these hooks as events occur at publisher's end
 
-## Setup Dev Env
+## Setup vscode Dev Container
 
-### Option 1: using WSL2
+> Note: only works with Visual Studio Code   
 
-= preferred option, especially when using WSL-Remote for Containers; development environment is 100% pre-cooked and standard for all developers
+Development environment is 100% pre-cooked and standard for all developers. Docker-compose is used to spin up dependencies like redis etc. The development env/container is part of the docker-compose definition, and shares the same container network with the other containers (redis etc). Ports that are opened (by the webapp) are automatically forwarded to the host machine (probably W10).
 
-See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for setup.
+See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
 
-### Option 2: 100% Windows10 setup
-
-Simply install Redis as a windows service on your local W10 machine. See instructions [here](https://medium.com/@binary10111010/redis-cli-installation-on-windows-684fb6b6ac6b).
-
-## Run Redis
-
-By default, Redis runs on port 6379.
-
-## Load test
-
-```bash
-./mvnw gatling:test -Dsimulation=LoadTest -Dduration=3600
-```
 ## Run app
 
 ```bash
@@ -39,22 +26,17 @@ By default, Redis runs on port 6379.
 
 Perform some HTTP-request via curl, postman, etc or just use the [HAL browser]() or the [Swagger UI](). 
 
-### Delete application by ID
+## Load test
 
 ```bash
-curl -v --request DELETE http://localhost:8080/applications/1
-```
-
-### Send (POST) a message to an application
-
-```bash
-curl -v --header "Content-type: text/plain" --request POST --data "WEBHOOK TEST" http://localhost:8080/applications/1/message
+./mvnw gatling:test -Dsimulation=LoadTest -Dduration=3600
 ```
 
 ## Useful commands
 
 ```
 # empty redis db
+# disabled: https://stackoverflow.com/questions/59111007/redis-err-unknown-command-flushdb
 redis-cli FLUSHDB
 
 # 

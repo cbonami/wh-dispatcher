@@ -8,9 +8,6 @@ import io.gatling.jdbc.Predef._
 import be.acerta.webhook.dispatcher.config.Config._
 import be.acerta.webhook.dispatcher.scenarios.CreateMessagesScenario
 
-// example: https://github.com/sahlas/gatling-examples/blob/initial_commit/src/user-files/simulations/players/PlayerCreateScenario.scala
-// https://devqa.io/gatling-random-post-request/
-// https://devqa.io/gatling-maven-performance-test-framework/
 class LoadTest extends Simulation {
 
 	val httpProtocol = http

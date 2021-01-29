@@ -48,4 +48,7 @@ C:\Users\cbona\dev\wh-dispatcher\target\gatling
 * https://partlycloudy.blog/2020/06/05/wsl2-making-windows-10-the-perfect-dev-machine/
 * https://kb.objectrocket.com/redis/run-redis-with-docker-compose-1055
 * https://www.novatec-gmbh.de/en/blog/including-hal-browser-spring-boot-without-using-spring-data-rest/
+* https://github.com/sahlas/gatling-examples/blob/initial_commit/src/user-files/simulations/players/PlayerCreateScenario.scala
+* https://devqa.io/gatling-maven-performance-test-framework/
+
 

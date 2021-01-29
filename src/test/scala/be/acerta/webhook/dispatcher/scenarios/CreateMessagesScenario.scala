@@ -27,7 +27,7 @@ object CreateMessagesScenario {
 		"Origin" -> app_url,
     "X-Requested-With" -> "XMLHttpRequest")
     
-  val createMessagesScenario =  scenario("messages.create")
+  val createMessagesScenario = scenario("messages.create")
 		.during(duration seconds){
 			feed(randomBody)
 			.exec(
