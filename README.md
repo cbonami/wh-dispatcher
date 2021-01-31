@@ -21,10 +21,11 @@ See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
 * [http://localhost:8080/browser/browser.html](http://localhost:8080/browser/browser.html) -> [HAL Explorer](https://github.com/toedter/hal-explorer); use this to TRAVERSE the api
 * [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) -> Swagger Docs UI
 * [http://localhost:8080/v3/api-docs/](http://localhost:8080/v3/api-docs/) -> Open API 3.0 JSON description.
+* [http://localhost:8080/actuator](http://localhost:8080/actuator) -> Actuator API to inspect and manage the webservice
 
 ## Use app
 
-Perform some HTTP-request via curl, postman, etc or just use the [HAL browser]() or the [Swagger UI](). 
+Perform some HTTP-request via curl, postman, etc. Lazy people simply use the [HAL Explorer](http://localhost:8080/browser/browser.html) or the [Swagger UI](). 
 
 ## Load test
 
@@ -36,10 +37,12 @@ Perform some HTTP-request via curl, postman, etc or just use the [HAL browser]()
 
 ```
 # empty redis db
-# disabled: https://stackoverflow.com/questions/59111007/redis-err-unknown-command-flushdb
 redis-cli FLUSHDB
+# when FLUSHDB disabled (https://stackoverflow.com/questions/59111007/redis-err-unknown-command-flushdb), then use:
+redis-cli --raw keys "*:*:*" | xargs redis-cli del
+redis-cli keys "*" | xargs -L1 -I '$' echo '"$"' | xargs redis-cli del
 
-# 
+# list all keys
 redis-cli keys *
 ```
 

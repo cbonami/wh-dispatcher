@@ -1,4 +1,4 @@
-package be.acerta.webhook.dispatcher.redis.maintenance.dto;
+package be.acerta.webhook.dispatcher.restcontrollers.dto;
 
 import java.io.Serializable;
 

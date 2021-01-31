@@ -22,6 +22,10 @@ sudo netsh interface portproxy add v4tov4 listenport="6380" connectaddress="$wsl
 MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 network.proxy.allow_hijacking_localhost  true
 
+{ "url":"http://ptsv2.com/t/p10lt-1611758591/post", "name":"fooapp"}
+{ "type":"webhook_v1", "data":"blablabla"}
+
+
 http://ptsv2.com/t/p10lt-1611758591/post
 
 C:\Users\cbona\dev\wh-dispatcher\target\gatling

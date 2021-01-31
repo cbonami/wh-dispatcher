@@ -168,10 +168,10 @@ public abstract class RedisClient {
         triggerProcessing(bucketId);
     }
 
-    public void removeEvent(String bucketId, Long eventId) {
+    public void removeEvent(String bucketId, String eventId) {
         log.debug("Verwijder voor event {} uit bucket {}", eventId, bucketId);
         String eventMessage = getBuckets().getAll(bucketId).stream()
-                .filter(message -> JsonUtil.getFieldAsString(message, "id").equals(eventId.toString())).findFirst()
+                .filter(message -> JsonUtil.getFieldAsString(message, "id").equals(eventId)).findFirst()
                 .orElse(null);
         removeMessage(bucketId, eventMessage);
         removeBucketFromCaches(bucketId);

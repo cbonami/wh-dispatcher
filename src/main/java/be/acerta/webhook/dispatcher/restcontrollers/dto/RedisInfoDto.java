@@ -1,14 +1,15 @@
-package be.acerta.webhook.dispatcher.redis.maintenance.dto;
+package be.acerta.webhook.dispatcher.restcontrollers.dto;
 
 import java.io.Serializable;
 import java.util.List;
 
 import lombok.Data;
 
+// @fixme merge RedisGroupInfoDto; there's only 1 group
 @Data
 public class RedisInfoDto implements Serializable {
 
-    public List<RedisGroupInfoDto> redisStatus;
+    private List<RedisGroupInfoDto> redisStatus;
 
     public static RedisInfoDto redisStatusDto() {
         return new RedisInfoDto();

@@ -23,12 +23,12 @@ import org.redisson.api.map.event.EntryUpdatedListener;
 @Slf4j
 public abstract class RedisMessageListener {
 
-    private List<MessageProcessingStrategy> eventStrategies;
+    private List<MessageProcessingStrategy> processingStrategies;
     private final String id;
     private RedisClient client;
 
     protected RedisMessageListener(RedisClient client, List<MessageProcessingStrategy> eventStrategies) {
-        this.eventStrategies = eventStrategies;
+        this.processingStrategies = eventStrategies;
         this.id = randomUUID().toString();
         this.client = client;
         unassignExistingListeners();
@@ -50,7 +50,7 @@ public abstract class RedisMessageListener {
         // haalt message uit map
         // exception ==> message blijft in map
         // ==> key in waitretry met expiry van 2 sec
-        // op gegeven moment stop je wel met rertyen en dan komt het op de watchdog
+        // op gegeven moment stop je wel met retryen en dan komt het op de watchdog
         // monitor
         client.getAwaitRetries().addListener((EntryExpiredListener<String, Integer>) e -> processRetry(e.getKey()));
 
@@ -176,7 +176,7 @@ public abstract class RedisMessageListener {
                     ex);
         client.getAwaitRetries().fastPut(bucketId, nextRetryInterval, nextRetryInterval, SECONDS);
 
-        if (isKleinerDanRedisMaxRetryInterval(nextRetryInterval)) {
+        if (isSmallerThanRedisMaxRetryInterval(nextRetryInterval)) {
             client.getNextRetryIntervals().put(bucketId, nextRetryInterval * NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR);
         } else {
             client.getNextRetryIntervals().put(bucketId, NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR);
@@ -187,31 +187,27 @@ public abstract class RedisMessageListener {
         return awaitRetryLock;
     }
 
-    boolean isKleinerDanRedisMaxRetryInterval(Integer nextRetryInterval) {
+    boolean isSmallerThanRedisMaxRetryInterval(Integer nextRetryInterval) {
         return nextRetryInterval < getRedisMaxRetryInterval();
     }
 
     private Optional<MessageProcessingStrategy> determineStrategy(MessageType eventType) {
-
-        return eventStrategies.stream().filter(eventStrategy -> eventStrategy.canProcess(eventType)).findFirst();
+        return processingStrategies.stream().filter(eventStrategy -> eventStrategy.canProcess(eventType)).findFirst();
     }
 
     private void unassignExistingListeners() {
         // look for existing listeners and activate
-        log.info("--- Unassigning existing listeners on buckets for group id {} ---", client.groupId());
+        log.info("--- Unassigning existing listeners on buckets ---");
         client.getProcessors().entrySet().stream().filter(entry -> !entry.getValue().equals(UNASSIGNED_KEY))
                 .peek(entry -> log.info("--- Found listener to unassign with id {} on bucket {} ", entry.getKey(),
                         entry.getValue()))
                 .collect(toSet()).iterator().forEachRemaining(entry -> entry.setValue(UNASSIGNED_KEY));
     }
 
-    private String getId(String message) {
-        return new JSONObject(message).get("id").toString();
-    }
 
     private String determineFirstMessageId(String bucketId) {
         Optional<String> message = client.getBuckets().get(bucketId).stream().findFirst();
-        return message.map(this::getId).orElse(null);
+        return message.map(m-> new JSONObject(m).get("id").toString()).orElse(null);
     }
 
     protected abstract Optional<MessageType> determineMessageType(String msg);

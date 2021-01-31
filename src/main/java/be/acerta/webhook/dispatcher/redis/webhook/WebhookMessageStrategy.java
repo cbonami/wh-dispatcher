@@ -33,12 +33,12 @@ public class WebhookMessageStrategy implements MessageProcessingStrategy {
     // @Transactional
     public void processMessage(String message) {
         log.debug("processMessage - {} \n", message);
-        WebhookMessageDto webhookEventDto = jsonToObject(message, WebhookMessageDto.class);
+        WebhookMessageDto messageDto = jsonToObject(message, WebhookMessageDto.class);
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         // todo pass tracingCorrelationId as header
-        HttpEntity<String> entity = new HttpEntity<>(webhookEventDto.getData(), headers);
-        ResponseEntity<String> response = restTemplate.exchange(webhookEventDto.getWebhookUrl(), HttpMethod.POST,
+        HttpEntity<String> entity = new HttpEntity<>(messageDto.getData(), headers);
+        ResponseEntity<String> response = restTemplate.exchange(messageDto.getWebhookUrl(), HttpMethod.POST,
                 entity, String.class);
         log.debug("Response status = {}", response.getStatusCode());
     }

@@ -1,4 +1,4 @@
-package be.acerta.webhook.dispatcher.redis.maintenance.dto;
+package be.acerta.webhook.dispatcher.restcontrollers.dto;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -10,7 +10,7 @@ public class RedisGroupInfoDto implements Serializable {
 
     private static final long serialVersionUID = -729113616264985503L;
 
-    private String id;
+    //private String id;
     private Integer nbBuckets;
     private Set<String> bucketIds;
     private Integer nbWaitingBuckets;
@@ -20,10 +20,10 @@ public class RedisGroupInfoDto implements Serializable {
         return new RedisGroupInfoDto();
     }
 
-    public RedisGroupInfoDto withId(String id) {
+/*     public RedisGroupInfoDto withId(String id) {
         this.id = id;
         return this;
-    }
+    } */
 
     public RedisGroupInfoDto withAantalBuckets(Integer aantalBuckets) {
         this.nbBuckets = aantalBuckets;

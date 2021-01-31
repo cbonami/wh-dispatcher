@@ -16,8 +16,8 @@ import org.json.JSONObject;
 
 public class WebhookRedisMessageListener extends RedisMessageListener {
 
-    public WebhookRedisMessageListener(WebhookRedisClient client, List<MessageProcessingStrategy> eventStrategies) {
-        super(client, eventStrategies);
+    public WebhookRedisMessageListener(WebhookRedisClient client, List<MessageProcessingStrategy> messageProcessingStrategies) {
+        super(client, messageProcessingStrategies);
     }
 
     @Override

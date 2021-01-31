@@ -42,8 +42,8 @@ public class ApiRootController {
 
         EmptyResource api = EmptyResource.builder().build();
         api.add(linkTo(methodOn(ApiRootController.class).api()).withSelfRel());
-        api.add(linkTo(methodOn(WebhookController.class).getEndpoints()).withRel("redis management"));
-        api.add(linkTo(methodOn(WebhookController.class).listApplications()).withRel("registered applications"));
+        api.add(linkTo(methodOn(WebhookMgmtController.class).getEndpoints()).withRel("redis management"));
+        api.add(linkTo(methodOn(WebhookMgmtController.class).listApplications()).withRel("registered applications"));
         return ResponseEntity.ok(api);
     }
 

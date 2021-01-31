@@ -108,7 +108,7 @@ In short:
 
 The ![devcontainer.json](./.devcontainer/devcontainer.json) and [Dockerfile](./.devcontainer/Dockerfile) is where the magic happens.
 
-Open a Terminal in vscode:
+When the dev container has started, open a Terminal in vscode:
 
 ```
 vscode ➜ /workspace (master ✗) $ mvn --version
@@ -127,7 +127,7 @@ Finally, run the webapp:
 vscode ➜ /workspace (master ✗) $ mvn spring-boot:run
 ```
 
-Point your browser to [http://localhost:8080/](http://localhost:8080/). The HAL Explorer will load where you can inspect and call the REST api.
+Point your browser to [http://localhost:8080/browser/browser.html](http://localhost:8080/browser/browser.html). The HAL Explorer will load where you can inspect and call the REST api.
 
 Spring devtools is also started, so there will be 2 ports forwarded to your local host (8080, x) where x is a random port like 35729.
 ```redis-cli``` is also pre-installed in the dev container.
