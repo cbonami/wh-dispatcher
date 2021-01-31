@@ -14,6 +14,7 @@ import static org.springframework.http.ResponseEntity.ok;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -139,21 +140,36 @@ public class WebhookMgmtController {
         }
 
         @Operation(//
-                        summary = "List all buckets that are currently being processed for a given app.", //
+                        summary = "List all buckets, incl the messages that they contain, that are currently being processed for a given app.", //
                         description = "Plz note that the results evaporate i.e. will vary from msec top msec as buckets (mini-queues) are emptied.", //
                         tags = { "application" })
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))) })
         @GetMapping(value = "/api" + APPLICATIONS_URL + "/{appId}/buckets", produces = { HAL_JSON_VALUE })
-        public ResponseEntity<CollectionModel<EntityModel<String>>> listBuckets(@PathVariable("appId") String appId) {
-                // todo fix
-                return ResponseEntity.ok(CollectionModel.of(Collections.emptyList(), //
-                                linkTo(methodOn(WebhookMgmtController.class).listBuckets(appId)).withSelfRel()));
+        public ResponseEntity<CollectionModel<Bucket>> listBuckets(@PathVariable("appId") String appId) {
+
+                return applicationRepository.findById(appId).map(app -> {
+
+                        List<Bucket> bucketResources = StreamSupport
+                                        .stream(this.redisClient.getBuckets().keySet().spliterator(), false)//
+                                        .filter(bucketId -> bucketId.startsWith(appId)).map(bucketId -> {
+                                                // todo
+                                                Bucket bucket = Bucket.builder().id(bucketId).build();
+                                                bucket.add(linkTo(methodOn(WebhookMgmtController.class).getBucket(appId,
+                                                                bucket.getId())).withSelfRel());
+                                                return bucket;
+                                        }).collect(Collectors.toList());
+                        return ResponseEntity.ok(CollectionModel.of(bucketResources, //
+                                        linkTo(methodOn(WebhookMgmtController.class).listBuckets(appId))
+                                                        .withSelfRel()));
+
+                }).orElse(ResponseEntity.notFound().build());
+
         }
 
         @Operation(//
                         summary = "List all messages that are currently being processed for a given app. ", //
-                        description = "Messages are grouped per bucket. Plz note that the results evaporate i.e. will vary from msec top msec as buckets (mini-queues) are emptied.", //
+                        description = "Messages are grouped per bucket. Plz note that the results evaporate i.e. will vary from msec to msec as buckets (mini-queues) are processed and emptied by the dispatcher processes.", //
                         tags = { "application" })
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Bucket.class)))) })
@@ -168,7 +184,6 @@ public class WebhookMgmtController {
                                                         bucket.getId())).withSelfRel());
                                         return bucket;
                                 }).collect(Collectors.toList());
-                // todo fix
                 return ResponseEntity.ok(CollectionModel.of(bucketResources, //
                                 linkTo(methodOn(WebhookMgmtController.class).listMessages(appId)).withSelfRel()));
         }
@@ -184,11 +199,14 @@ public class WebhookMgmtController {
                 // linkTo(methodOn(WebhookController.class).getBucket(appId,
                 // bucketId)).withSelfRel()));
                 return applicationRepository.findById(appId).map(app -> {
+
                         // @fixme return bucket with all its messages
-                        final Bucket bucket = Bucket.builder().id(bucketId).build();
+                        redisClient.getBuckets().get(bucketId);
+
+                        Bucket bucket = Bucket.builder().id(bucketId).build();
                         bucket.add(linkTo(methodOn(WebhookMgmtController.class).getBucket(appId, bucket.getId()))
                                         .withSelfRel());
-                        bucket.add(linkTo(methodOn(WebhookMgmtController.class).forceProcessing(appId,bucketId))
+                        bucket.add(linkTo(methodOn(WebhookMgmtController.class).forceProcessing(appId, bucketId))
                                         .withRel("force"));
                         bucket.add(linkTo(methodOn(WebhookMgmtController.class).triggerProcessing(appId, bucketId))
                                         .withRel("force"));
@@ -289,13 +307,16 @@ public class WebhookMgmtController {
                                         .mimeType(isEmpty(mimeType) ? MediaType.APPLICATION_JSON_VALUE : mimeType) //
                                         .webhookUrl(application.getUrl()) //
                                         .build();
-                        Message msg = this.webhookRedisMessageProducer.publish(application.getName(),
-                                        bucketId.equals("*") ? UUID.randomUUID().toString() : bucketId,
-                                        webhookMessageDto);
+                        Message msg = this.webhookRedisMessageProducer.publish(appId,
+                                        bucketId.equals("*") ? randomBucketNumber(30) : bucketId, webhookMessageDto);
                         return new ResponseEntity<>(msg, HttpStatus.CREATED);
 
                 }).orElse(ResponseEntity.notFound().build());
 
+        }
+
+        private String randomBucketNumber(int nbBuckets) {
+                return String.valueOf(ThreadLocalRandom.current().nextInt(1, nbBuckets) + 1);
         }
 
         @DeleteMapping(value = "/api" + APPLICATIONS_URL + "/{appId}/messages/{messageId}", produces = HAL_JSON_VALUE)

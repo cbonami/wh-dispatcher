@@ -11,9 +11,9 @@ public class WebhookRedisMessageProducer extends RedisMessageProducer {
         super(client);
     }
 
-    public Message publish(String appName, String bucketId, WebhookMessageDto dto) {
+    public Message publish(String appId, String bucketId, WebhookMessageDto dto) {
 
-        super.doPublish(appName + "/" + bucketId, JsonUtil.objectToJson(dto));
+        super.doPublish(appId + "/" + bucketId, JsonUtil.objectToJson(dto));
 
         return Message.builder().id(dto.getId()).idempotencyKey(dto.getIdempotencyKey()).build();
     }
