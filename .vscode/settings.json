@@ -7,5 +7,6 @@
     "files.autoSave": "off",
     "files.watcherExclude": {
         "**/target": true
-    }
+    },
+    "java.dependency.syncWithFolderExplorer": true
 }

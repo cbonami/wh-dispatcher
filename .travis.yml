@@ -10,4 +10,5 @@ before_install:
 
 install: echo "My projects will be configurable in an awesomical way ;)."
 
-script: ./mvnw spring-boot:build-image
+#script: ./mvnw spring-boot:build-image
+script: ./mvnw package jib:build
