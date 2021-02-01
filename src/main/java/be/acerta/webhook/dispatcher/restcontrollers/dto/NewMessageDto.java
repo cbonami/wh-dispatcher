@@ -7,6 +7,6 @@ import lombok.*;
 public class NewMessageDto {
 
     private String type;
-    private String body;
+    private String data;
     
 }
