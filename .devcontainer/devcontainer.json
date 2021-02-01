@@ -21,7 +21,8 @@
     "Pivotal.vscode-spring-boot",
     "GabrielBB.vscode-lombok",
     "GitHub.vscode-pull-request-github",
-    "SonarSource.sonarlint-vscode"
+    "SonarSource.sonarlint-vscode",
+    "vscjava.vscode-spring-boot-dashboard"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

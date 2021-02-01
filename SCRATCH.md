@@ -55,5 +55,7 @@ C:\Users\cbona\dev\wh-dispatcher\target\gatling
 * https://www.novatec-gmbh.de/en/blog/including-hal-browser-spring-boot-without-using-spring-data-rest/
 * https://github.com/sahlas/gatling-examples/blob/initial_commit/src/user-files/simulations/players/PlayerCreateScenario.scala
 * https://devqa.io/gatling-maven-performance-test-framework/
-
+* https://code.visualstudio.com/docs/java/java-spring-cloud
+* https://medium.com/swlh/build-a-docker-image-using-maven-and-spring-boot-58147045a400
+* https://www.baeldung.com/jib-dockerizing
 
