@@ -1,5 +1,6 @@
 package be.acerta.webhook.dispatcher.redis;
 
+import static be.acerta.webhook.dispatcher.LazyString.lazy;
 import static java.util.Objects.isNull;
 
 import java.util.UUID;
@@ -106,30 +107,13 @@ public abstract class RedisClient {
                 .getLock(groupId() + SEPARATOR + AWAIT_RETRY_SUFFIX + SEPARATOR + LOCK_SUFFIX + SEPARATOR + bucketId);
     }
 
-    /**
-     * Removes a message from a bucket. This method is called when a mesagge is
-     * succesfully processed or when a message holds an event that is not relevant
-     *
-     * @param bucketId
-     * @param message
-     */
-    public void removeMessage(String bucketId, String message) {
-        log.info("Removing message {} with message id {} from bucket id {}", message, getId(message), bucketId);
-        getBuckets().remove(bucketId, message);
-        if (getBuckets().get(bucketId).isEmpty()) {
-            log.info("Removing empty bucket with id {}", bucketId);
-            getProcessors().remove(bucketId);
-        }
-        getNextRetryIntervals().remove(bucketId);
-    }
-
-    private String getId(String message) {
+    public static String getMessageId(String message) {
         return new JSONObject(message).get("id").toString();
     }
 
     /**
-     * @deprecated the group-concept should be factored out; we will only use this service
-     *       to dispatch webhooks, and for nothing else
+     * @deprecated the group-concept should be factored out; we will only use this
+     *             service to dispatch webhooks, and for nothing else
      */
     @Deprecated
     public abstract String groupId();
@@ -151,13 +135,13 @@ public abstract class RedisClient {
     }
 
     public void removeBucket(String bucketId) {
-        log.debug("removeBucket voor bucket {}", bucketId);
+        log.debug("Remove bucket {}", bucketId);
         getBuckets().removeAll(bucketId);
         removeBucketFromCaches(bucketId);
     }
 
     public void triggerProcessing(String bucketId) {
-        log.debug("Trigger processing voor bucket {}", bucketId);
+        log.debug("Trigger processing for bucket {}", bucketId);
         removeBucketFromRetryCaches(bucketId);
         getProcessors().fastPut(bucketId, UNASSIGNED_KEY);
     }
@@ -168,13 +152,30 @@ public abstract class RedisClient {
         triggerProcessing(bucketId);
     }
 
-    public void removeEvent(String bucketId, String eventId) {
-        log.debug("Verwijder voor event {} uit bucket {}", eventId, bucketId);
+    public void removeMessageById(String bucketId, String messageId) {
+        log.debug("Verwijder voor event {} uit bucket {}", messageId, bucketId);
         String eventMessage = getBuckets().getAll(bucketId).stream()
-                .filter(message -> JsonUtil.getFieldAsString(message, "id").equals(eventId)).findFirst()
-                .orElse(null);
+                .filter(message -> JsonUtil.getFieldAsString(message, "id").equals(messageId)).findFirst().orElse(null);
         removeMessage(bucketId, eventMessage);
         removeBucketFromCaches(bucketId);
+    }
+
+        /**
+     * Removes a message from a bucket. This method is called when a mesagge is
+     * succesfully processed or when a message holds an event that is not relevant
+     *
+     * @param bucketId
+     * @param message
+     */
+    public void removeMessage(String bucketId, String message) {
+        log.debug("Removing message {} with message id {} from bucket id {}", message, lazy(() -> getMessageId(message)),
+                bucketId);
+        getBuckets().remove(bucketId, message);
+        if (getBuckets().get(bucketId).isEmpty()) {
+            log.debug("Removing empty bucket with id {}", bucketId);
+            getProcessors().remove(bucketId);
+        }
+        getNextRetryIntervals().remove(bucketId);
     }
 
     private void removeBucketFromCaches(String bucketId) {
