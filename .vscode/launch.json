@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-WebhookDispatcherApplication<wh-dispatcher>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "be.acerta.webhook.dispatcher.WebhookDispatcherApplication",
+            "projectName": "wh-dispatcher",
+            "args": ""
+        }
+    ]
+}

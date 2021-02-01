@@ -42,6 +42,10 @@ When maven builds the image, JIB will push it to docker hub registry. Credential
 ./mvnw spring-boot:run
 ```
 
+> Note: LiveReload server is also started for fast development (spring-dev-tools).
+
+Following endpoints are exposed by the application:
+
 * [http://localhost:8080/browser/browser.html](http://localhost:8080/browser/browser.html) -> [HAL Explorer](https://github.com/toedter/hal-explorer); use this to TRAVERSE the api
 * [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) -> Swagger Docs UI
 * [http://localhost:8080/v3/api-docs/](http://localhost:8080/v3/api-docs/) -> Open API 3.0 JSON description.
@@ -52,6 +56,8 @@ When maven builds the image, JIB will push it to docker hub registry. Credential
 Perform some HTTP-request via curl, postman, etc. Lazy people simply use the [HAL Explorer](http://localhost:8080/browser/browser.html) or the [Swagger UI](). 
 
 ## Load test
+
+Make sure the app runs. Then:
 
 ```bash
 ./mvnw gatling:test -Dsimulation=LoadTest -Dduration=3600

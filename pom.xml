@@ -25,6 +25,7 @@
         <!-- <module>wh-subscriber</module> -->
     </modules>
     <build>
+        <!-- vscode java plugin wants this to be explicitly specified -->
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
     </build>
