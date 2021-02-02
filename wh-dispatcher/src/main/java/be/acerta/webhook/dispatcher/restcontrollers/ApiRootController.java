@@ -3,6 +3,8 @@ package be.acerta.webhook.dispatcher.restcontrollers;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.hateoas.MediaTypes;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @EnableHypermediaSupport(type = HypermediaType.HAL)
+@Tags({ @Tag(name = "Root") })
 public class ApiRootController {
 
     @Builder
@@ -31,8 +34,7 @@ public class ApiRootController {
 
         EmptyResource api = EmptyResource.builder().build();
         api.add(linkTo(methodOn(ApiRootController.class).root()).withSelfRel());
-        api.add(linkTo(methodOn(ApiRootController.class).api()).withRel("api"));
-        //api.add(linkTo(ApiRootController.class).slash("swagger-ui.html").withRel("swagger-ui"));
+        api.add(linkTo(methodOn(ApiRootController.class).api()).withRel("main api"));
 
         return ResponseEntity.ok(api);
     }
@@ -43,7 +45,7 @@ public class ApiRootController {
         EmptyResource api = EmptyResource.builder().build();
         api.add(linkTo(methodOn(ApiRootController.class).api()).withSelfRel());
         api.add(linkTo(methodOn(WebhookMgmtController.class).getEndpoints()).withRel("redis management"));
-        api.add(linkTo(methodOn(WebhookMgmtController.class).listApplications()).withRel("registered applications"));
+        api.add(linkTo(methodOn(WebhookMgmtController.class).listWebhooks()).withRel("registered webhooks"));
         return ResponseEntity.ok(api);
     }
 

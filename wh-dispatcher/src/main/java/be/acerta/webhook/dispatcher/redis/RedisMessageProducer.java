@@ -19,17 +19,17 @@ public abstract class RedisMessageProducer {
      * times, each time with another message. A 'bucket' is a logical group of
      * messages with the same key i.e. bucketId.
      * 
-     * @param bucketId is the actual key in the multimap structure in the key-value
+     * @param absoluteBucketId is the actual key in the multimap structure in the key-value
      *                 store; btw, a bucketId is unique across the key-value store i.e. 2
      *                 webhooks cannot have the same bucketId
      * @param message  is the actual value for the key/bucketId
      */
-    protected void doPublish(String bucketId, String message) {
+    protected void doAsyncSend(String absoluteBucketId, String message) {
 
         // main cache met key + lijst(messages) als value (typische multimap)
         // key = bucket
         RMultimapCache<String, String> messages = client.getBuckets();
-        if (!messages.put(bucketId, message))
+        if (!messages.put(absoluteBucketId, message))
             return;
 
         // 3 or 4 caches
@@ -40,7 +40,7 @@ public abstract class RedisMessageProducer {
         // processorlocks, zodanig dat een andere processor er niet gaat aankomen
         // aparte cache; reden: op de andere cache (hierboven) kan je geen locks leggen
         RMap<String, String> processorlocks = client.getProcessors();
-        processorlocks.putIfAbsent(bucketId, UNASSIGNED_KEY);
+        processorlocks.putIfAbsent(absoluteBucketId, UNASSIGNED_KEY);
 
     }
 }

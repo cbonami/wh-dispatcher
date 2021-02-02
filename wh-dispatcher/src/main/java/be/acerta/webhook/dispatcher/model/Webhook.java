@@ -1,5 +1,7 @@
 package be.acerta.webhook.dispatcher.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AllArgsConstructor;
@@ -12,10 +14,11 @@ import org.springframework.data.redis.core.index.Indexed;
 import org.springframework.hateoas.RepresentationModel;
 
 /**
- * Physically spoken, a ```Webhook``` represents an endpoint (url) that the dispatcher will POST
- * messages to. However, multiple Webhook-instances can share the same url. The latter
- * means that, from a logical point of view, a ```Webhook``` can also be seen as a
- * named point-to-point 'Queue' from a (set of systems) to a particular other system.
+ * From a more physical point of view, a ```Webhook``` represents an endpoint
+ * (url) that the dispatcher will POST messages to. However, multiple
+ * Webhook-instances can share the same url. The latter means that, from a
+ * logical point of view, a ```Webhook``` can also be seen as a named
+ * point-to-point 'Queue' from a (set of systems) to a particular other system.
  */
 @RedisHash("Webhook")
 @Data
@@ -34,10 +37,14 @@ public class Webhook extends RepresentationModel<Webhook> {
     private String name;
 
     @Indexed
-    private Boolean online;
+    private Boolean pubSub;
 
-    public void setOffline(Boolean offline) {
-        this.online = false;
-    }
+    /**
+     * MessageTypes that this webhook subscribes to.
+     */
+    private List<String> subscribesTo;
+
+    // @Indexed
+    // private Boolean online;
 
 }

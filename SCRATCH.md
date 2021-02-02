@@ -22,7 +22,15 @@ sudo netsh interface portproxy add v4tov4 listenport="6380" connectaddress="$wsl
 MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 network.proxy.allow_hijacking_localhost  true
 
-{ "url":"http://ptsv2.com/t/p10lt-1611758591/post", "name":"working"}
+{
+  "url": "http://ptsv2.com/t/p10lt-1611758591/post",
+  "name": "workingWebhook",
+  "pubSub": false,
+  "subscribesTo": [
+    "string"
+  ]
+}
+
 { "url":"http://problem.com", "name":"problematic"}
 { "type":"webhook_v1", "data":"blablabla"}
 
@@ -58,4 +66,6 @@ C:\Users\cbona\dev\wh-dispatcher\target\gatling
 * https://code.visualstudio.com/docs/java/java-spring-cloud
 * https://medium.com/swlh/build-a-docker-image-using-maven-and-spring-boot-58147045a400
 * https://www.baeldung.com/jib-dockerizing
+* https://dzone.com/articles/using-spring-data-redis-in-spring-boot-with-custom
+* https://www.concretepage.com/spring-4/spring-data-redis-example
 
