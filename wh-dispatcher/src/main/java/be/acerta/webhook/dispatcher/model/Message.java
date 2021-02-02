@@ -17,6 +17,7 @@ public class Message extends RepresentationModel<Message> {
     private String id;
     private String idempotencyKey;
     private String data;
+    private String delivery;
     private String type;
     private String webhookUrl;
     private String mimeType;

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import be.acerta.webhook.dispatcher.redis.MessageProcessingStrategy;
-import be.acerta.webhook.dispatcher.redis.MessageType;
+import be.acerta.webhook.dispatcher.redis.MessageDeliveryType;
 import be.acerta.webhook.dispatcher.redis.RedisMessageListener;
 import org.json.JSONObject;
 
@@ -20,8 +20,8 @@ public class WebhookRedisMessageListener extends RedisMessageListener {
     }
 
     @Override
-    protected Optional<MessageType> determineMessageType(String message) {
-        return MessageType.fromNaam(new JSONObject(message).getString("type"));
+    protected Optional<MessageDeliveryType> determineMessageType(String message) {
+        return MessageDeliveryType.fromNaam(new JSONObject(message).getString("delivery"));
     }
 
     @Override

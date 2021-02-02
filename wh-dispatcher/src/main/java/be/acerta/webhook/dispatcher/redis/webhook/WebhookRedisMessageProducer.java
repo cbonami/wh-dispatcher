@@ -29,14 +29,21 @@ public class WebhookRedisMessageProducer extends RedisMessageProducer {
 
         super.doAsyncSend(webhookId + "|" + whBucketId, JsonUtil.objectToJson(dto));
 
-        return Message.builder().id(dto.getId()).idempotencyKey(dto.getIdempotencyKey()).build();
+        return Message.builder().id(dto.getId()).idempotencyKey(dto.getIdempotencyKey()).delivery(dto.getDelivery())
+                .type(dto.getType()).build();
     }
 
+    /**
+     * Publishes a message PubSub style.
+     * 
+     * @param whBucketId the non-absolute i.e. logical webhookId
+     */
     public Collection<Message> publish(String whBucketId, WebhookMessageDto dto) {
 
-        dto.getType();
+        dto.getDelivery();
 
-        // @fixme send message to all webhooks that are interested (subscribed) to this type of message ('fan out')
+        // @fixme send message to all webhooks that are interested (subscribed) to this
+        // type of message ('fan out')
 
         return Lists.<Message>newArrayList();
     }

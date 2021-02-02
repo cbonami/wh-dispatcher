@@ -191,7 +191,7 @@ public abstract class RedisMessageListener {
         return nextRetryInterval < getRedisMaxRetryInterval();
     }
 
-    private Optional<MessageProcessingStrategy> determineStrategy(MessageType eventType) {
+    private Optional<MessageProcessingStrategy> determineStrategy(MessageDeliveryType eventType) {
         return processingStrategies.stream().filter(eventStrategy -> eventStrategy.canProcess(eventType)).findFirst();
     }
 
@@ -210,7 +210,7 @@ public abstract class RedisMessageListener {
         return message.map(m-> new JSONObject(m).get("id").toString()).orElse(null);
     }
 
-    protected abstract Optional<MessageType> determineMessageType(String msg);
+    protected abstract Optional<MessageDeliveryType> determineMessageType(String msg);
 
     protected abstract Long getRedisMaxRetryInterval();
 }

@@ -2,10 +2,10 @@ package be.acerta.webhook.dispatcher.redis;
 
 public interface MessageProcessingStrategy {
 
-    boolean canProcess(MessageType eventType);
+    boolean canProcess(MessageDeliveryType eventType);
 
     void processMessage(String messageBody);
 
-    MessageType getProcessedMessageType();
+    MessageDeliveryType getProcessedMessageType();
     
 }

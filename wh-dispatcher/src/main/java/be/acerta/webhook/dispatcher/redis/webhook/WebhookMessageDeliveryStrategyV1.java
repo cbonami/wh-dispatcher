@@ -7,7 +7,7 @@ import java.util.Collections;
 import javax.inject.Inject;
 
 import be.acerta.webhook.dispatcher.redis.MessageProcessingStrategy;
-import be.acerta.webhook.dispatcher.redis.MessageType;
+import be.acerta.webhook.dispatcher.redis.MessageDeliveryType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,13 +19,13 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @Slf4j
-public class WebhookMessageStrategy implements MessageProcessingStrategy {
+public class WebhookMessageDeliveryStrategyV1 implements MessageProcessingStrategy {
 
     @Inject
     private RestTemplate restTemplate;
 
     @Override
-    public boolean canProcess(MessageType eventType) {
+    public boolean canProcess(MessageDeliveryType eventType) {
         return eventType.equals(getProcessedMessageType());
     }
 
@@ -43,8 +43,8 @@ public class WebhookMessageStrategy implements MessageProcessingStrategy {
         log.debug("Response status = {}", response.getStatusCode());
     }
 
-    public MessageType getProcessedMessageType() {
-        return MessageType.WEBHOOK_V1;
+    public MessageDeliveryType getProcessedMessageType() {
+        return MessageDeliveryType.WEBHOOK_V1;
     }
 
 }

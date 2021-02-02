@@ -17,7 +17,13 @@ public class WebhookMessageDto implements Serializable {
 
     private String id;
     private String data;
+
+    /** how (protocol + agreed post-api) message needs to be delivered, i.e. webhook_v1 */
+    private String delivery;
+    
+    /** class of the message i.e. SomethingHappenedEvent */
     private String type;
+
     private String webhookUrl;
     private String mimeType;
 

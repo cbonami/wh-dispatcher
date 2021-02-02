@@ -24,12 +24,13 @@ import be.acerta.webhook.dispatcher.model.Message;
 import be.acerta.webhook.dispatcher.model.Webhook;
 import be.acerta.webhook.dispatcher.persistence.WebhookRepository;
 import be.acerta.webhook.dispatcher.redis.JsonUtil;
+import be.acerta.webhook.dispatcher.redis.MessageDeliveryType;
 import be.acerta.webhook.dispatcher.redis.RedisClient;
 import be.acerta.webhook.dispatcher.redis.webhook.WebhookMessageDto;
 import be.acerta.webhook.dispatcher.redis.webhook.WebhookRedisMessageProducer;
 import be.acerta.webhook.dispatcher.restcontrollers.dto.BooleanDto;
-import be.acerta.webhook.dispatcher.restcontrollers.dto.NewWebhookDto;
 import be.acerta.webhook.dispatcher.restcontrollers.dto.NewMessageDto;
+import be.acerta.webhook.dispatcher.restcontrollers.dto.NewWebhookDto;
 import be.acerta.webhook.dispatcher.restcontrollers.dto.RedisInfoDto;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,6 +84,10 @@ public class WebhookMgmtController {
         @Autowired
         private RedisClient redisClient;
 
+        // @fixme nb of automatically created buckets should be an injected application
+        // property
+        private int nbAutoBuckets = 30;
+
         @Operation(//
                         summary = "Register a webhook (URL).", //
                         description = "Used by an external party to register a url to which the dispatcher will POST messages", //
@@ -111,7 +116,8 @@ public class WebhookMgmtController {
                                 .map(wh -> {
                                         wh.add(linkTo(methodOn(WebhookMgmtController.class).getWebhook(wh.getId()))
                                                         .withSelfRel());
-                                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listBuckets(wh.getId())).withRel(BUCKETS));
+                                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listBuckets(wh.getId()))
+                                                        .withRel(BUCKETS));
                                         wh.add(linkTo(methodOn(WebhookMgmtController.class).listMessages(wh.getId()))
                                                         .withRel(MESSAGES));
                                         return wh;
@@ -121,7 +127,7 @@ public class WebhookMgmtController {
                                                 .andAffordance(afford(
                                                                 methodOn(WebhookMgmtController.class).newWebhook(null))) //
                                                 .andAffordance(afford(methodOn(WebhookMgmtController.class)
-                                                                .newMessage(null, null, -1, null)))));
+                                                                .newMessage(null, null, "none", false, null)))));
         }
 
         @Operation(//
@@ -133,8 +139,7 @@ public class WebhookMgmtController {
         public ResponseEntity<Webhook> getWebhook(@PathVariable("whId") String whId) {
                 return webhookRepository.findById(whId).map(wh -> {
                         wh.add(linkTo(methodOn(WebhookMgmtController.class).getWebhook(wh.getId())).withSelfRel());
-                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listBuckets(wh.getId()))
-                                        .withRel(BUCKETS));
+                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listBuckets(wh.getId())).withRel(BUCKETS));
                         return ResponseEntity.ok(wh);
                 }).orElse(ResponseEntity.notFound().build());
         }
@@ -147,15 +152,13 @@ public class WebhookMgmtController {
                         @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Bucket.class)))) })
         @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/buckets", produces = HAL_JSON_VALUE)
         public ResponseEntity<CollectionModel<Bucket>> listBuckets(//
-                        @PathVariable("whId") String whId
-                        /* , @RequestParam(required = false, defaultValue = "true") boolean absoluteWebhookId */) {
+                        @PathVariable("whId") String whId) {
 
                 return webhookRepository.findById(whId).map(wh -> {
 
                         List<Bucket> bucketResources = getBucketsByWebhook(whId);
                         return ResponseEntity.ok(CollectionModel.of(bucketResources, //
-                                        linkTo(methodOn(WebhookMgmtController.class).listBuckets(whId))
-                                                        .withSelfRel()));
+                                        linkTo(methodOn(WebhookMgmtController.class).listBuckets(whId)).withSelfRel()));
 
                 }).orElse(ResponseEntity.notFound().build());
 
@@ -185,7 +188,8 @@ public class WebhookMgmtController {
                         summary = "Return bucket with all its contained messages", //
                         tags = { "bucket" })
         @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/buckets/{bucketId}", produces = HAL_JSON_VALUE)
-        public ResponseEntity<Bucket> getBucket(@PathVariable("whId") String whId,
+        public ResponseEntity<Bucket> getBucket(//
+                        @PathVariable("whId") String whId, //
                         @PathVariable("bucketId") String bucketId) {
 
                 return webhookRepository.findById(whId).map(wh -> {
@@ -302,13 +306,16 @@ public class WebhookMgmtController {
 
         @Operation(//
                         summary = "POST a message to specified registered webhook (url).", //
-                        description = "Mainly geared towards testing of the webhook-api of the destination-webhook. Plz note that the webhook dispatcher is kept as generic as possible, which means that it is up to the poster to define the bucket that a message belongs to.", //
+                        description = "Mainly geared towards testing of the webhook-api of the destination-application."
+                                        + " Plz note that the webhook dispatcher is kept as generic as possible, which means"
+                                        + "that it is up to the poster to define the bucket that a message belongs to.", //
                         tags = { "message" })
         @PostMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/messages", produces = { HAL_JSON_VALUE })
         public ResponseEntity<Message> newMessage( //
                         @PathVariable("whId") String whId, //
                         @RequestBody NewMessageDto message, //
-                        @RequestParam(value = "bucket", defaultValue = "-1") int bucketNb, //
+                        @RequestParam(value = "bucket", defaultValue = "none") String bucketId, //
+                        @RequestParam(required = false, defaultValue = "false") boolean absoluteBucketId, //
                         @RequestHeader("Content-Type") String mimeType) {
 
                 return webhookRepository.findById(whId).map(webhook -> {
@@ -328,14 +335,22 @@ public class WebhookMgmtController {
                                         .idempotencyKey(idempotencyKey) //
                                         .mimeType(isEmpty(mimeType) ? MediaType.APPLICATION_JSON_VALUE : mimeType) //
                                         .webhookUrl(webhook.getUrl()) //
+                                        .delivery(MessageDeliveryType.WEBHOOK_V1.toString()) //
                                         .build();
-                        Message msg = this.webhookRedisMessageProducer.asyncSend(whId,
-                                        String.valueOf(bucketNb == -1 ? randomBucketNumber(30) : bucketNb),
+
+                        Message msg = this.webhookRedisMessageProducer.asyncSend(whId, String.valueOf(//
+                                        bucketId.equals("none") ? randomBucketNumber(30)
+                                                        : transformToAbsoluteBucketId(absoluteBucketId, whId,
+                                                                        bucketId)),
                                         webhookMessageDto);
                         return new ResponseEntity<>(msg, HttpStatus.CREATED);
 
                 }).orElse(ResponseEntity.notFound().build());
 
+        }
+
+        private String transformToAbsoluteBucketId(boolean absoluteBucketId, String whId, String bucketId) {
+                return (absoluteBucketId) ? bucketId : (whId + "|" + bucketId);
         }
 
         private int randomBucketNumber(int nbBuckets) {

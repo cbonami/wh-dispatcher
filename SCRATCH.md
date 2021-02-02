@@ -1,3 +1,32 @@
+# test messages
+
+webhook:
+
+{
+  "url": "http://ptsv2.com/t/p10lt-1611758591/post",
+  "name": "workingWebhook",
+  "pubSub": false,
+  "subscribesTo": [
+    "string"
+  ]
+}
+
+{ "url":"http://problem.com", "name":"problematic"}
+
+message:
+
+{
+  "type": "webhook_v1",
+  "data": "doemme"
+}
+
+# postbin
+
+http://ptsv2.com/t/p10lt-1611758591/post
+
+
+# -------------
+
 > fyi, I am using a docker host running in Ubuntu 20.04 in Linux subsystem (WSL2) for Windows 10
 
 We'll start a redis container and use [port forwarding](https://ibmimedia.com/blog/258/how-to-use-netsh-to-configure-port-forwarding-on-windows) to connect to the docker container.
@@ -22,20 +51,6 @@ sudo netsh interface portproxy add v4tov4 listenport="6380" connectaddress="$wsl
 MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 network.proxy.allow_hijacking_localhost  true
 
-{
-  "url": "http://ptsv2.com/t/p10lt-1611758591/post",
-  "name": "workingWebhook",
-  "pubSub": false,
-  "subscribesTo": [
-    "string"
-  ]
-}
-
-{ "url":"http://problem.com", "name":"problematic"}
-{ "type":"webhook_v1", "data":"blablabla"}
-
-
-http://ptsv2.com/t/p10lt-1611758591/post
 
 C:\Users\cbona\dev\wh-dispatcher\target\gatling
 

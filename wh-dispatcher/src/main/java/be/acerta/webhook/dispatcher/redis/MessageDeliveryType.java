@@ -4,7 +4,7 @@ import static java.util.Arrays.stream;
 
 import java.util.Optional;
 
-public enum MessageType {
+public enum MessageDeliveryType {
     // AANVRAAGPERIODE_AANGEMAAKT("AanvraagPeriodeAangemaakt"),
     // AANVRAAGPERIODE_GEWIJZIGD("AanvraagPeriodeGewijzigd"),
     // AANVRAAGPERIODE_VERWIJDERD("AanvraagPeriodeVerwijderd"),
@@ -51,11 +51,12 @@ public enum MessageType {
     // STARTUP_CREATIE("StartupCreatie", false);
 
     WEBHOOK_V1("webhook_v1"),
-    WEBHOOK_V2("webhook_v2");
+    WEBHOOK_V2("webhook_v2"),
+    SSE("SSE");
 
     private final String naam;
 
-    MessageType(String naam) {
+    MessageDeliveryType(String naam) {
         this.naam = naam;
     }
 
@@ -63,7 +64,7 @@ public enum MessageType {
         return naam;
     }
 
-    public static Optional<MessageType> fromNaam(String naam) {
-        return stream(MessageType.values()).filter(eventName -> eventName.naam.equalsIgnoreCase(naam)).findFirst();
+    public static Optional<MessageDeliveryType> fromNaam(String naam) {
+        return stream(MessageDeliveryType.values()).filter(eventName -> eventName.naam.equalsIgnoreCase(naam)).findFirst();
     }
 }
