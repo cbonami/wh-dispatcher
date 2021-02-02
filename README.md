@@ -51,6 +51,8 @@ Following endpoints are exposed by the application:
 * [http://localhost:8080/v3/api-docs/](http://localhost:8080/v3/api-docs/) -> Open API 3.0 JSON description.
 * [http://localhost:8080/actuator](http://localhost:8080/actuator) -> Actuator API to inspect and manage the webservice
 
+[./clear-redis.sh](./clear-redis.sh) can be used to empty the redis database during testing.
+
 ## Use app
 
 Perform some HTTP-request via curl, postman, etc. Lazy people simply use the [HAL Explorer](http://localhost:8080/browser/browser.html) or the [Swagger UI](). 

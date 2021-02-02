@@ -1,9 +1,9 @@
 package be.acerta.webhook.dispatcher.persistence;
 
-import be.acerta.webhook.dispatcher.model.Application;
+import be.acerta.webhook.dispatcher.model.Webhook;
 import org.springframework.data.repository.CrudRepository;
 
-public interface ApplicationRepository extends CrudRepository<Application, String> {
+public interface ApplicationRepository extends CrudRepository<Webhook, String> {
 
     // @Modifying
     // @Transactional

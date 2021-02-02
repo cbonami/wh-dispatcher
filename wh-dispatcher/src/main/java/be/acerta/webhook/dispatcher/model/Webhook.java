@@ -2,22 +2,28 @@ package be.acerta.webhook.dispatcher.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 import org.springframework.hateoas.RepresentationModel;
 
 /**
- * An subscribing application corresponds to an endpoint (url) that we will POST
- * messages to.
+ * Physically spoken, a ```Webhook``` represents an endpoint (url) that the dispatcher will POST
+ * messages to. However, multiple Webhook-instances can share the same url. The latter
+ * means that, from a logical point of view, a ```Webhook``` can also be seen as a
+ * named point-to-point 'Queue' from a (set of systems) to a particular other system.
  */
-@RedisHash("Application")
+@RedisHash("Webhook")
 @Data
-@Builder
 @JsonInclude(Include.NON_NULL)
-public class Application extends RepresentationModel<Application> {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Webhook extends RepresentationModel<Webhook> {
 
     @Id
     private String id;

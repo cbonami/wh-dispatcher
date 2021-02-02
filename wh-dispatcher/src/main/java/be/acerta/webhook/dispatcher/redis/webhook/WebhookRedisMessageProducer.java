@@ -11,9 +11,20 @@ public class WebhookRedisMessageProducer extends RedisMessageProducer {
         super(client);
     }
 
-    public Message publish(String appId, int bucketNb, WebhookMessageDto dto) {
+    /**
+     * Schedules the sending of a message that belongs to a logical bucket. The
+     * message is sent to a specific endpoint (URL) as identified by the webhookId.
+     * Message is first stored in REDIS, where it will be picked up by a listener.
+     * 
+     * @param webhookId   identifies the webhook
+     * @param appBucketId identifies the bucket WITHIN THE WEBHOOK
+     * @param dto
+     * @return the id and idempotency key that have been generated for this message
+     * @see be.acerta.webhook.dispatcher.redis.webhook.RedisMessageListener
+     */
+    public Message publish(String webhookId, String appBucketId, WebhookMessageDto dto) {
 
-        super.doPublish(appId + "|" + bucketNb, JsonUtil.objectToJson(dto));
+        super.doPublish(webhookId + "|" + appBucketId, JsonUtil.objectToJson(dto));
 
         return Message.builder().id(dto.getId()).idempotencyKey(dto.getIdempotencyKey()).build();
     }

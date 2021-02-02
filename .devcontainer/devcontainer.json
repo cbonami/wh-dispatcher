@@ -22,7 +22,9 @@
     "GabrielBB.vscode-lombok",
     "GitHub.vscode-pull-request-github",
     "SonarSource.sonarlint-vscode",
-    "vscjava.vscode-spring-boot-dashboard"
+    "vscjava.vscode-spring-boot-dashboard",
+    "trinm1709.dracula-theme-from-intellij",
+    "k--kato.intellij-idea-keybindings"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

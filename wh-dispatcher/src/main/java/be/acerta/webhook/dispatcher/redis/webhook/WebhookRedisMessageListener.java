@@ -8,7 +8,6 @@ import be.acerta.webhook.dispatcher.redis.MessageType;
 import be.acerta.webhook.dispatcher.redis.RedisMessageListener;
 import org.json.JSONObject;
 
-//bonami import static ParameterNaam.SKEDIFY_REDIS_MAX_RETRY_INTERVAL;
 
 /**
  * Reads messages from REDIS and calls a webhook for each of them.
@@ -27,8 +26,7 @@ public class WebhookRedisMessageListener extends RedisMessageListener {
 
     @Override
     protected Long getRedisMaxRetryInterval() {
-        // bonami return
-        // parameterService.findOneExistingByNaam(SKEDIFY_REDIS_MAX_RETRY_INTERVAL).getWaarde();
+        // @fixme replace constant by application property
         return 10000L;
     }
 }

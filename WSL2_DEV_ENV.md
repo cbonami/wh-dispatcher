@@ -145,6 +145,8 @@ These plugins will be automatically installed at dev container startup:
 * [vscode-pull-request-github](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)
 * [SonarSource.sonarlint-vscode](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode)
 * [vscjava.vscode-spring-boot-dashboard](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-spring-boot-dashboard)
+* [trinm1709.dracula-theme-from-intellij](https://vscodethemes.com/e/trinm1709.dracula-theme-from-intellij)
+* [k--kato.intellij-idea-keybindings](https://marketplace.visualstudio.com/items?itemName=k--kato.intellij-idea-keybindings)
 
 ## Some other info
 
