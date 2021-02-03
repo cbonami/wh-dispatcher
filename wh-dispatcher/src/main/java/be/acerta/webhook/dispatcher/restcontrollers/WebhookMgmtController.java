@@ -9,6 +9,7 @@ import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.afford;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 
 import java.util.List;
@@ -50,7 +51,6 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -101,6 +101,7 @@ public class WebhookMgmtController {
                                 .pubSub(dto.isPubSub())//
                                 .build();
                 Webhook webhook = webhookRepository.save(applicationRequest);
+                webhook.add(linkTo(methodOn(WebhookMgmtController.class).listMessages(dto.getName())).withSelfRel());
                 return ResponseEntity.ok(webhook);
         }
 
@@ -114,11 +115,11 @@ public class WebhookMgmtController {
 
                 List<Webhook> appResources = StreamSupport.stream(webhookRepository.findAll().spliterator(), false)
                                 .map(wh -> {
-                                        wh.add(linkTo(methodOn(WebhookMgmtController.class).getWebhook(wh.getId()))
+                                        wh.add(linkTo(methodOn(WebhookMgmtController.class).getWebhook(wh.getName()))
                                                         .withSelfRel());
-                                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listBuckets(wh.getId()))
+                                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listBuckets(wh.getName()))
                                                         .withRel(BUCKETS));
-                                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listMessages(wh.getId()))
+                                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listMessages(wh.getName()))
                                                         .withRel(MESSAGES));
                                         return wh;
                                 }).collect(Collectors.toList());
@@ -127,7 +128,7 @@ public class WebhookMgmtController {
                                                 .andAffordance(afford(
                                                                 methodOn(WebhookMgmtController.class).newWebhook(null))) //
                                                 .andAffordance(afford(methodOn(WebhookMgmtController.class)
-                                                                .newMessage(null, null, "none", false, null)))));
+                                                                .newMessage(null, null, "none", null)))));
         }
 
         @Operation(//
@@ -135,11 +136,12 @@ public class WebhookMgmtController {
                         tags = { "webhook" })
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = Bucket.class))) })
-        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whId}", produces = HAL_JSON_VALUE)
-        public ResponseEntity<Webhook> getWebhook(@PathVariable("whId") String whId) {
-                return webhookRepository.findById(whId).map(wh -> {
-                        wh.add(linkTo(methodOn(WebhookMgmtController.class).getWebhook(wh.getId())).withSelfRel());
-                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listBuckets(wh.getId())).withRel(BUCKETS));
+        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whName}", produces = HAL_JSON_VALUE)
+        public ResponseEntity<Webhook> getWebhook(@PathVariable("whName") String whName) {
+                return webhookRepository.findByName(whName).map(wh -> {
+                        wh.add(linkTo(methodOn(WebhookMgmtController.class).getWebhook(wh.getName())).withSelfRel());
+                        wh.add(linkTo(methodOn(WebhookMgmtController.class).listBuckets(wh.getName()))
+                                        .withRel(BUCKETS));
                         return ResponseEntity.ok(wh);
                 }).orElse(ResponseEntity.notFound().build());
         }
@@ -150,15 +152,16 @@ public class WebhookMgmtController {
                         tags = { "webhook" })
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Bucket.class)))) })
-        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/buckets", produces = HAL_JSON_VALUE)
+        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whName}/buckets", produces = HAL_JSON_VALUE)
         public ResponseEntity<CollectionModel<Bucket>> listBuckets(//
-                        @PathVariable("whId") String whId) {
+                        @PathVariable("whName") String whName) {
 
-                return webhookRepository.findById(whId).map(wh -> {
+                return webhookRepository.findByName(whName).map(wh -> {
 
-                        List<Bucket> bucketResources = getBucketsByWebhook(whId);
+                        List<Bucket> bucketResources = getBucketsByWebhookId(wh.getId());
                         return ResponseEntity.ok(CollectionModel.of(bucketResources, //
-                                        linkTo(methodOn(WebhookMgmtController.class).listBuckets(whId)).withSelfRel()));
+                                        linkTo(methodOn(WebhookMgmtController.class).listBuckets(whName))
+                                                        .withSelfRel()));
 
                 }).orElse(ResponseEntity.notFound().build());
 
@@ -170,14 +173,14 @@ public class WebhookMgmtController {
                         tags = { "webhook" })
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Bucket.class)))) })
-        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/messages", produces = HAL_JSON_VALUE)
-        public ResponseEntity<CollectionModel<Bucket>> listMessages(@PathVariable("whId") String whId) {
-                return webhookRepository.findById(whId).map(wh -> {
+        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whName}/messages", produces = HAL_JSON_VALUE)
+        public ResponseEntity<CollectionModel<Bucket>> listMessages(@PathVariable("whName") String whName) {
+                return webhookRepository.findByName(whName).map(wh -> {
 
-                        List<Bucket> bucketResources = getBucketsByWebhook(whId);
+                        List<Bucket> bucketResources = getBucketsByWebhookId(wh.getId());
 
                         return ResponseEntity.ok(CollectionModel.of(bucketResources, //
-                                        linkTo(methodOn(WebhookMgmtController.class).listMessages(whId))
+                                        linkTo(methodOn(WebhookMgmtController.class).listMessages(whName))
                                                         .withSelfRel()));
 
                 }).orElse(ResponseEntity.notFound().build());
@@ -187,26 +190,27 @@ public class WebhookMgmtController {
         @Operation(//
                         summary = "Return bucket with all its contained messages", //
                         tags = { "bucket" })
-        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/buckets/{bucketId}", produces = HAL_JSON_VALUE)
+        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whName}/buckets/{bucketId}", produces = HAL_JSON_VALUE)
         public ResponseEntity<Bucket> getBucket(//
-                        @PathVariable("whId") String whId, //
+                        @PathVariable("whName") String whName, //
                         @PathVariable("bucketId") String bucketId) {
 
-                return webhookRepository.findById(whId).map(wh -> {
+                return webhookRepository.findByName(whName).map(wh -> {
 
-                        List<Message> messages = getMessagesInBucket(bucketId);
+                        String absBucketId = transformToAbsoluteBucketId(wh.getId(), bucketId);
+                        List<Message> messages = getMessagesInBucketById(absBucketId);
                         /*
                          * if (bstr == null) return ResponseEntity.notFound().<Bucket>build();
                          */
                         Bucket bucket = Bucket.builder()//
-                                        .id(bucketId)//
+                                        .id(absBucketId)//
                                         .messages(messages)//
                                         .build();
-                        bucket.add(linkTo(methodOn(WebhookMgmtController.class).getBucket(whId, bucket.getId()))
+                        bucket.add(linkTo(methodOn(WebhookMgmtController.class).getBucket(whName, bucketId))
                                         .withSelfRel());
-                        bucket.add(linkTo(methodOn(WebhookMgmtController.class).forceProcessing(whId, bucketId))
+                        bucket.add(linkTo(methodOn(WebhookMgmtController.class).forceProcessing(whName, bucketId))
                                         .withRel("force"));
-                        bucket.add(linkTo(methodOn(WebhookMgmtController.class).triggerProcessing(whId, bucketId))
+                        bucket.add(linkTo(methodOn(WebhookMgmtController.class).triggerProcessing(whName, bucketId))
                                         .withRel("trigger"));
 
                         return ResponseEntity.ok(bucket);
@@ -214,7 +218,7 @@ public class WebhookMgmtController {
 
         }
 
-        private void removeMessagesByApp(String whId) {
+        private void removeMessagesByWebhookId(String whId) {
                 redisClient.getBuckets().keySet().stream().forEach(key -> {
                         try {
                                 if (key.startsWith(whId))
@@ -225,17 +229,17 @@ public class WebhookMgmtController {
                 });
         }
 
-        private List<Message> getMessagesInBucket(String bucketId) {
-                return redisClient.getBuckets().getAll(bucketId).stream()//
+        private List<Message> getMessagesInBucketById(String absBucketId) {
+                return redisClient.getBuckets().getAll(absBucketId).stream()//
                                 .map(message -> JsonUtil.jsonToObject(message, Message.class))//
                                 .collect(Collectors.toList());
         }
 
-        private List<Bucket> getBucketsByWebhook(String whId) {
+        private List<Bucket> getBucketsByWebhookId(String whId) {
                 return StreamSupport.stream(this.redisClient.getBuckets().keySet().spliterator(), false)//
                                 .filter(bucketId -> bucketId.startsWith(whId))//
                                 .map(bucketId -> {
-                                        List<Message> messages = getMessagesInBucket(bucketId);
+                                        List<Message> messages = getMessagesInBucketById(bucketId);
                                         Bucket bucket = Bucket.builder().id(bucketId).messages(messages).build();
                                         bucket.add(linkTo(methodOn(WebhookMgmtController.class).getBucket(whId,
                                                         bucket.getId())).withSelfRel());
@@ -247,12 +251,12 @@ public class WebhookMgmtController {
         @Operation(//
                         summary = "Remove bucket with all its messages", //
                         tags = { "bucket" })
-        @DeleteMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/buckets/{bucketId}", produces = HAL_JSON_VALUE)
-        public ResponseEntity<Void> removeBucket(@PathVariable("whId") String whId,
+        @DeleteMapping(value = "/api" + WEBHOOKS_URL + "/{whName}/buckets/{bucketId}", produces = HAL_JSON_VALUE)
+        public ResponseEntity<Void> removeBucket(@PathVariable("whName") String whName,
                         @PathVariable("bucketId") String bucketId) {
-                return webhookRepository.findById(whId).map(wh -> {
-                        // todo fix
-                        redisClient.removeBucket(bucketId);
+                return webhookRepository.findByName(whName).map(wh -> {
+                        String absBucketId = transformToAbsoluteBucketId(wh.getId(), bucketId);
+                        redisClient.removeBucket(absBucketId);
                         return ResponseEntity.noContent().<Void>build();
                 }).orElse(ResponseEntity.notFound().build());
 
@@ -261,12 +265,13 @@ public class WebhookMgmtController {
         @Operation(//
                         summary = "Trigger processing of bucket's messages", //
                         tags = { "bucket" })
-        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/buckets/{bucketId}/trigger", produces = HAL_JSON_VALUE)
-        public ResponseEntity<Void> triggerProcessing(@PathVariable("whId") String whId,
+        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whName}/buckets/{bucketId}/trigger", produces = HAL_JSON_VALUE)
+        public ResponseEntity<Void> triggerProcessing(@PathVariable("whName") String whName,
                         @PathVariable("bucketId") String bucketId) {
 
-                return webhookRepository.findById(whId).map(wh -> {
-                        redisClient.triggerProcessing(bucketId);
+                return webhookRepository.findByName(whName).map(wh -> {
+                        String absBucketId = transformToAbsoluteBucketId(wh.getId(), bucketId);
+                        redisClient.triggerProcessing(absBucketId);
                         return ResponseEntity.noContent().<Void>build();
                 }).orElse(ResponseEntity.notFound().build());
 
@@ -275,32 +280,43 @@ public class WebhookMgmtController {
         @Operation(//
                         summary = "Is processor of given bucket locked ?", //
                         tags = { "bucket" })
-        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/buckets/{bucketId}/locked", produces = HAL_JSON_VALUE)
-        public ResponseEntity<BooleanDto> isProcessorLocked(@PathVariable("whId") String whId,
+        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whName}/buckets/{bucketId}/locked", produces = HAL_JSON_VALUE)
+        public ResponseEntity<BooleanDto> isProcessorLocked(@PathVariable("whName") String whName,
                         @PathVariable("bucketId") String bucketId) {
-                return ok(BooleanDto.booleanDto().withValue(redisClient.isProcessorLocked(bucketId)));
+
+                return webhookRepository.findByName(whName).map(wh -> {
+                        String absBucketId = transformToAbsoluteBucketId(wh.getId(), bucketId);
+                        redisClient.triggerProcessing(absBucketId);
+                        return ok(BooleanDto.booleanDto().withValue(redisClient.isProcessorLocked(absBucketId)));
+                }).orElse(ResponseEntity.notFound().build());
+
         }
 
         @Operation(//
                         summary = "Force processing of bucket's messages", //
                         tags = { "bucket" })
-        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/buckets/{bucketId}/force", produces = HAL_JSON_VALUE)
-        public ResponseEntity<Void> forceProcessing(@PathVariable("whId") String whId,
+        @GetMapping(value = "/api" + WEBHOOKS_URL + "/{whName}/buckets/{bucketId}/force", produces = HAL_JSON_VALUE)
+        public ResponseEntity<Void> forceProcessing(@PathVariable("whName") String whName,
                         @PathVariable("bucketId") String bucketId) {
-                redisClient.forceProcessing(bucketId);
-                return ResponseEntity.noContent().<Void>build();
+
+                return webhookRepository.findByName(whName).map(wh -> {
+                        String absBucketId = transformToAbsoluteBucketId(wh.getId(), bucketId);
+                        redisClient.forceProcessing(absBucketId);
+                        return ResponseEntity.noContent().<Void>build();
+                }).orElse(ResponseEntity.notFound().build());
+
         }
 
         @Operation(//
                         summary = "Delete webhook by id.", //
                         description = "Deletes an webhook and deregisters all its webhooks.", //
                         tags = { "webhook" })
-        @DeleteMapping(value = "/api" + WEBHOOKS_URL + "/{whId}")
-        public ResponseEntity<String> deleteApplication(@PathVariable("whId") String whId) {
-                return webhookRepository.findById(whId).map(wh -> {
+        @DeleteMapping(value = "/api" + WEBHOOKS_URL + "/{whName}")
+        public ResponseEntity<Void> deleteApplication(@PathVariable("whName") String whName) {
+                return webhookRepository.findByName(whName).map(wh -> {
                         webhookRepository.delete(wh);
-                        removeMessagesByApp(whId);
-                        return ResponseEntity.ok(wh.getId());
+                        removeMessagesByWebhookId(wh.getId());
+                        return ResponseEntity.noContent().<Void>build();
                 }).orElse(ResponseEntity.notFound().build());
         }
 
@@ -310,15 +326,14 @@ public class WebhookMgmtController {
                                         + " Plz note that the webhook dispatcher is kept as generic as possible, which means"
                                         + "that it is up to the poster to define the bucket that a message belongs to.", //
                         tags = { "message" })
-        @PostMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/messages", produces = { HAL_JSON_VALUE })
+        @PostMapping(value = "/api" + WEBHOOKS_URL + "/{whName}/messages", produces = { HAL_JSON_VALUE })
         public ResponseEntity<Message> newMessage( //
-                        @PathVariable("whId") String whId, //
+                        @PathVariable("whName") String whName, //
                         @RequestBody NewMessageDto message, //
-                        @RequestParam(value = "bucket", defaultValue = "none") String bucketId, //
-                        @RequestParam(required = false, defaultValue = "false") boolean absoluteBucketId, //
-                        @RequestHeader("Content-Type") String mimeType) {
+                        @RequestParam(value = "bucketId", defaultValue = "none") String bucketId, //
+                        @RequestHeader(value = "Content-Type", defaultValue = APPLICATION_JSON_VALUE) String mimeType) {
 
-                return webhookRepository.findById(whId).map(webhook -> {
+                return webhookRepository.findByName(whName).map(webhook -> {
                         log.debug("Publishing Message [{}] to existing Webhook {}", lazy(message::toString),
                                         lazy(webhook::getName));
 
@@ -333,15 +348,14 @@ public class WebhookMgmtController {
                                         .type(message.getType()) //
                                         .data(message.getData()) //
                                         .idempotencyKey(idempotencyKey) //
-                                        .mimeType(isEmpty(mimeType) ? MediaType.APPLICATION_JSON_VALUE : mimeType) //
+                                        .mimeType(isEmpty(mimeType) ? APPLICATION_JSON_VALUE : mimeType) //
                                         .webhookUrl(webhook.getUrl()) //
                                         .delivery(MessageDeliveryType.WEBHOOK_V1.toString()) //
                                         .build();
 
-                        Message msg = this.webhookRedisMessageProducer.asyncSend(whId, String.valueOf(//
-                                        bucketId.equals("none") ? randomBucketNumber(30)
-                                                        : transformToAbsoluteBucketId(absoluteBucketId, whId,
-                                                                        bucketId)),
+                        Message msg = this.webhookRedisMessageProducer.asyncSend(webhook.getId(),
+                                        String.valueOf(bucketId.equals("none") ? randomBucketNumber(30)
+                                                        : transformToAbsoluteBucketId(webhook.getId(), bucketId)),
                                         webhookMessageDto);
                         return new ResponseEntity<>(msg, HttpStatus.CREATED);
 
@@ -349,21 +363,21 @@ public class WebhookMgmtController {
 
         }
 
-        private String transformToAbsoluteBucketId(boolean absoluteBucketId, String whId, String bucketId) {
-                return (absoluteBucketId) ? bucketId : (whId + "|" + bucketId);
+        private String transformToAbsoluteBucketId(String whId, String bucketId) {
+                return (bucketId.contains("|")) ? bucketId : (whId + "|" + bucketId);
         }
 
         private int randomBucketNumber(int nbBuckets) {
                 return (ThreadLocalRandom.current().nextInt(1, nbBuckets) + 1);
         }
 
-        @DeleteMapping(value = "/api" + WEBHOOKS_URL + "/{whId}/messages/{messageId}", produces = HAL_JSON_VALUE)
-        public ResponseEntity<Void> deleteMessage(@PathVariable("whId") String whId, String bucketId,
+        @DeleteMapping(value = "/api" + WEBHOOKS_URL + "/{whName}/buckets/{bucketId}/{messageId}", produces = HAL_JSON_VALUE)
+        public ResponseEntity<Void> deleteMessage(@PathVariable("whName") String whName, @PathVariable("bucketId") String bucketId,
                         String messageId) {
 
-                return webhookRepository.findById(whId).map(wh -> {
-                        webhookRepository.delete(wh);
-                        redisClient.removeMessageById(bucketId, messageId);
+                return webhookRepository.findByName(whName).map(wh -> {
+                        String absBucketId = transformToAbsoluteBucketId(wh.getId(), bucketId);
+                        redisClient.removeMessageById(absBucketId, messageId);
                         return ResponseEntity.noContent().<Void>build();
                 }).orElse(ResponseEntity.notFound().build());
 

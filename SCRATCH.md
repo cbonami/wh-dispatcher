@@ -16,8 +16,8 @@ webhook:
 message:
 
 {
-  "type": "webhook_v1",
-  "data": "doemme"
+  "type": "SomethingHappenedEvent",
+  "data": "what the hell happened ?"
 }
 
 # postbin

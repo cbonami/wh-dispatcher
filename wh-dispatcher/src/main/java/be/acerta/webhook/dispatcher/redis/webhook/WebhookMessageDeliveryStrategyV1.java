@@ -36,7 +36,8 @@ public class WebhookMessageDeliveryStrategyV1 implements MessageProcessingStrate
         WebhookMessageDto messageDto = jsonToObject(message, WebhookMessageDto.class);
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        // todo pass tracingCorrelationId as header
+        headers.set("MessageType", messageDto.getType());
+        // @fixme pass tracingCorrelationId as header (cfr w3c TraceContext)
         HttpEntity<String> entity = new HttpEntity<>(messageDto.getData(), headers);
         ResponseEntity<String> response = restTemplate.exchange(messageDto.getWebhookUrl(), HttpMethod.POST,
                 entity, String.class);

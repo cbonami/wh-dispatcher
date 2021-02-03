@@ -1,13 +1,14 @@
 package be.acerta.webhook.dispatcher.persistence;
 
 import java.util.List;
+import java.util.Optional;
 
 import be.acerta.webhook.dispatcher.model.Webhook;
 import org.springframework.data.repository.CrudRepository;
 
 public interface WebhookRepository extends CrudRepository<Webhook, String> {
 
-    List<Webhook> findByName(String name);
+    Optional<Webhook> findByName(String name);
 
     // @Modifying
     // @Transactional
