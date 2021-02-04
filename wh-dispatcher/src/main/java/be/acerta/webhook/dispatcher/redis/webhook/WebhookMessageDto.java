@@ -25,7 +25,7 @@ public class WebhookMessageDto implements Serializable {
     private String type;
 
     private String webhookUrl;
-    private String mimeType;
+    private String mediaType;
 
     // makes the message unique, so that the reciver can know if it has received the
     // message before when it is being resubmitted

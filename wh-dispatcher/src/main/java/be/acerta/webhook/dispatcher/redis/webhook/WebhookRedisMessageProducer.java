@@ -22,7 +22,7 @@ public class WebhookRedisMessageProducer extends RedisMessageProducer {
      * @param webhookId  identifies the webhook
      * @param whBucketId identifies the bucket WITHIN THE WEBHOOK
      * @param dto
-     * @return the id and idempotency key that have been generated for this message
+     * @return the message as it will be posted later on
      * @see be.acerta.webhook.dispatcher.redis.webhook.RedisMessageListener
      */
     public Message asyncSend(String webhookId, String whBucketId, WebhookMessageDto dto) {
@@ -34,7 +34,9 @@ public class WebhookRedisMessageProducer extends RedisMessageProducer {
     }
 
     /**
-     * Publishes a message PubSub style.
+     * Publishes a message PubSub-style. The system inspects the message, and
+     * figures out which webhooks are interested in the message's type. Then it
+     * ```asyncSend```-s the message to the subscribed webhook(s).
      * 
      * @param whBucketId the non-absolute i.e. logical webhookId
      */

@@ -20,5 +20,5 @@ public class Message extends RepresentationModel<Message> {
     private String delivery;
     private String type;
     private String webhookUrl;
-    private String mimeType;
+    private String mediaType;
 }

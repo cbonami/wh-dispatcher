@@ -41,7 +41,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +64,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableHypermediaSupport(type = HypermediaType.HAL)
 // @EnableHypermediaSupport(type = HypermediaType.HAL_FORMS)
 @Schema(title = "Manage webhooks")
-@Tags({ @Tag(name = "Webhooks") })
+@Tag(name = "Webhooks")
 @Slf4j
 public class WebhookMgmtController {
 
@@ -89,8 +88,8 @@ public class WebhookMgmtController {
         private int nbAutoBuckets = 30;
 
         @Operation(//
-                        summary = "Register a webhook (URL).", //
-                        description = "Used by an external party to register a url to which the dispatcher will POST messages", //
+                        summary = "Register a webhook (URL) with a unique name", //
+                        description = "Used by an external party ('application') to register a url to which the service will dispatch (POST) messages", //
                         tags = { "webhook" })
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "201", description = "successful operation", content = @Content(schema = @Schema(implementation = Webhook.class))) })
@@ -106,7 +105,7 @@ public class WebhookMgmtController {
         }
 
         @Operation(//
-                        summary = "List registered webhooks.", //
+                        summary = "Lists all registered webhooks", //
                         tags = { "webhook" })
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Webhook.class)))) })
@@ -132,7 +131,7 @@ public class WebhookMgmtController {
         }
 
         @Operation(//
-                        summary = "Returns an webhook by id.", //
+                        summary = "Returns an webhook by name", //
                         tags = { "webhook" })
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "successful operation", content = @Content(schema = @Schema(implementation = Bucket.class))) })
@@ -308,7 +307,7 @@ public class WebhookMgmtController {
         }
 
         @Operation(//
-                        summary = "Delete webhook by id.", //
+                        summary = "Delete webhook by name.", //
                         description = "Deletes an webhook and deregisters all its webhooks.", //
                         tags = { "webhook" })
         @DeleteMapping(value = "/api" + WEBHOOKS_URL + "/{whName}")
@@ -331,7 +330,7 @@ public class WebhookMgmtController {
                         @PathVariable("whName") String whName, //
                         @RequestBody NewMessageDto message, //
                         @RequestParam(value = "bucketId", defaultValue = "none") String bucketId, //
-                        @RequestHeader(value = "Content-Type", defaultValue = APPLICATION_JSON_VALUE) String mimeType) {
+                        @RequestHeader(value = "Content-Type", defaultValue = APPLICATION_JSON_VALUE) String mediaType) {
 
                 return webhookRepository.findByName(whName).map(webhook -> {
                         log.debug("Publishing Message [{}] to existing Webhook {}", lazy(message::toString),
@@ -348,7 +347,7 @@ public class WebhookMgmtController {
                                         .type(message.getType()) //
                                         .data(message.getData()) //
                                         .idempotencyKey(idempotencyKey) //
-                                        .mimeType(isEmpty(mimeType) ? APPLICATION_JSON_VALUE : mimeType) //
+                                        .mediaType(isEmpty(mediaType) ? APPLICATION_JSON_VALUE : mediaType) //
                                         .webhookUrl(webhook.getUrl()) //
                                         .delivery(MessageDeliveryType.WEBHOOK_V1.toString()) //
                                         .build();
