@@ -15,7 +15,6 @@
 	<description>Fake subscriber to POST messages to during testing</description>
 	<properties>
 		<java.version>11</java.version>
-		<spring-boot-admin.version>2.3.1</spring-boot-admin.version>
 		<image.path>registry.hub.docker.com/cbonami/wh-subscriber-fake</image.path>
 	</properties>
 	<dependencies>
@@ -71,7 +70,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testSourceDirectory>src/test/scala</testSourceDirectory>

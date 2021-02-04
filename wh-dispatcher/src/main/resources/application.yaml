@@ -1,21 +1,23 @@
 server:
     port: 8080
 
-
-#JPA Configuration
 spring:
+    boot:
+        admin:
+            client:
+                url: http://localhost:8081
     application:
         name: webhook-dispatcher
-    profiles:
-        active: local
-logging.level.be.acerta: DEBUG
-
 management:
     endpoints:
         web:
             exposure:
                 include: "*"
+    endpoint:
+        health:
+            show-details: "always"
 
 redis:
     url: redis://localhost:6379
     password: bar
+logging.level.be.acerta: DEBUG
