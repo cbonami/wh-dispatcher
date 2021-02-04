@@ -12,28 +12,11 @@ Development environment is 100% pre-cooked and standard for all developers. Dock
 
 See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
 
-## Configure Docker Hub Registry
-
-When maven builds the image, JIB will push it to docker hub registry. Credentials need to be provided in [/home/vscode/.m2/settings.xml](/home/vscode/.m2/settings.xml):
-
-```xml
-<settings>
-
-  <servers>
-    <server>
-      <id>registry.hub.docker.com</id>
-      <username>cbonami</username>
-      <password>....</password>
-    </server>
-  </servers>
-
-</settings>
-```
 
 ## Build app and push image
 
 ```bash
-./mvnw compile jib:build
+./mvnw package -Djib.to.image=registry.hub.docker.com/cbonami/wh-dispatcher -Djib.to.auth.username=cbonami -Djib.to.auth.password=<password docker registry>
 ```
 
 ## Run app
