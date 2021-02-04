@@ -15,8 +15,10 @@ See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
 
 ## Build app and push image
 
+Username and password for the docker hub registry need to be passed. If you want to change the registry/repository, you can alter 
+
 ```bash
-./mvnw package -Djib.to.image=registry.hub.docker.com/cbonami/wh-dispatcher -Djib.to.auth.username=cbonami -Djib.to.auth.password=<password docker registry>
+./mvnw package -Djib.to.auth.username=cbonami -Djib.to.auth.password=<password docker registry>
 ```
 
 ## Run app

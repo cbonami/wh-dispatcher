@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch WhSubscriberFakeApplication",
+            "request": "launch",
+            "mainClass": "be.acerta.subscriber.WhSubscriberFakeApplication",
+            "projectName": "wh-subscriber-fake"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-WebhookDispatcherApplication<wh-dispatcher>",
             "request": "launch",
             "cwd": "${workspaceFolder}",

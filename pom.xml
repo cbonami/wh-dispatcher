@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.1</version>
+        <version>2.4.2</version>
         <relativePath/>
         <!-- lookup parent from repository -->
     </parent>
@@ -22,7 +22,7 @@
     </properties>
     <modules>
         <module>wh-dispatcher</module>
-        <!-- <module>wh-subscriber</module> -->
+        <module>wh-subscriber-fake</module>
     </modules>
     <build>
         <!-- vscode java plugin wants this to be explicitly specified -->

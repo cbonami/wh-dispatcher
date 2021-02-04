@@ -83,8 +83,7 @@ public class WebhookMgmtController {
         @Autowired
         private RedisClient redisClient;
 
-        // @fixme nb of automatically created buckets should be an injected application
-        // property
+        // @fixme nb of automatically created buckets should be an injected application property
         private int nbAutoBuckets = 30;
 
         @Operation(//

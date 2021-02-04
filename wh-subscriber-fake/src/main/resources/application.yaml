@@ -1,0 +1,15 @@
+server:
+    port: 8081
+
+spring:
+    application:
+        name: webhook-subscriber-fake
+    profiles:
+        active: local
+logging.level.be.acerta: DEBUG
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
