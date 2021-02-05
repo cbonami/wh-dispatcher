@@ -9,13 +9,13 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>be.acerta</groupId>
-	<artifactId>wh-subscriber-fake</artifactId>
+	<artifactId>wh-subscriber-dummy</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>wh-subscriber-fake</name>
+	<name>wh-subscriber-dummy</name>
 	<description>Fake subscriber to POST messages to during testing</description>
 	<properties>
 		<java.version>11</java.version>
-		<image.path>registry.hub.docker.com/cbonami/wh-subscriber-fake</image.path>
+		<image.path>registry.hub.docker.com/cbonami/wh-subscriber-dummy</image.path>
 	</properties>
 	<dependencies>
 		<dependency>

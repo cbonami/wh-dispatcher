@@ -25,6 +25,10 @@ message:
 http://ptsv2.com/t/p10lt-1611758591/post
 
 
+# post to ws-subscriber-fake
+curl --header "Content-Type: application/json" --request POST \
+--data '{"username":"xyz","password":"xyz"}' http://localhost:8081/postit
+
 # -------------
 
 > fyi, I am using a docker host running in Ubuntu 20.04 in Linux subsystem (WSL2) for Windows 10

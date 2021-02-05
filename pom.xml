@@ -23,7 +23,7 @@
     </properties>
     <modules>
         <module>wh-dispatcher</module>
-        <module>wh-subscriber-fake</module>
+        <module>wh-subscriber-dummy</module>
         <module>wh-admin-server</module>
     </modules>
     <build>
