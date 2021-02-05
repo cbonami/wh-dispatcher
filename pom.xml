@@ -24,6 +24,7 @@
     <modules>
         <module>wh-dispatcher</module>
         <module>wh-subscriber-fake</module>
+        <module>wh-admin-server</module>
     </modules>
     <build>
         <!-- vscode java plugin wants this to be explicitly specified -->

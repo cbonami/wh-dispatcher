@@ -9,13 +9,13 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>be.acerta</groupId>
-	<artifactId>wh-subscriber-fake</artifactId>
+	<artifactId>wh-admin-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>wh-subscriber-fake</name>
-	<description>Fake subscriber to POST messages to during testing</description>
+	<name>wh-admin-server</name>
+	<description>Spring Boot Admin Server</description>
 	<properties>
 		<java.version>11</java.version>
-		<image.path>registry.hub.docker.com/cbonami/wh-subscriber-fake</image.path>
+		<image.path>registry.hub.docker.com/cbonami/wh-admin-server</image.path>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -25,6 +25,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-starter-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -53,11 +57,7 @@
 			<artifactId>junit-platform-runner</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-client</artifactId>
-        </dependency>
-		
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -83,7 +83,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<!-- https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods -->
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>

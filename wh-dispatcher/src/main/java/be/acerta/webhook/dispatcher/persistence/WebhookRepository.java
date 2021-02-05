@@ -1,6 +1,5 @@
 package be.acerta.webhook.dispatcher.persistence;
 
-import java.util.List;
 import java.util.Optional;
 
 import be.acerta.webhook.dispatcher.model.Webhook;

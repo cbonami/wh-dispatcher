@@ -1,13 +1,12 @@
 server:
-    port: 8080
+    port: 9090
 
 spring:
-    boot:
-        admin:
-            client:
-                url: http://localhost:9090
     application:
-        name: webhook-dispatcher
+        name: webhook-admin-server
+    profiles:
+        active: local
+
 management:
     endpoints:
         web:
@@ -17,7 +16,4 @@ management:
         health:
             show-details: "always"
 
-redis:
-    url: redis://localhost:6379
-    password: bar
 logging.level.be.acerta: DEBUG

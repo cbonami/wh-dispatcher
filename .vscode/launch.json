@@ -16,6 +16,26 @@
             "mainClass": "be.acerta.webhook.dispatcher.WebhookDispatcherApplication",
             "projectName": "wh-dispatcher",
             "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-WhSubscriberFakeApplication<wh-admin-server>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "be.acerta.subscriber.WhSubscriberFakeApplication",
+            "projectName": "wh-admin-server",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-WhAdminServerApplication<wh-admin-server>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "be.acerta.subscriber.WhAdminServerApplication",
+            "projectName": "wh-admin-server",
+            "args": ""
         }
     ]
 }
