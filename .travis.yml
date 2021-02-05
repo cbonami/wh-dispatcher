@@ -6,7 +6,7 @@ services:
 before_install:
 - chmod +x mvnw
 install: echo "My projects will be configurable in an awesomical way ;)."
-script: ./mvnw package -Djib.to.image=registry.hub.docker.com/cbonami/wh-dispatcher -Djib.to.auth.username=cbonami -Djib.to.auth.password=$REGISTRY_PASSWORD
+script: ./mvnw package -Djib.to.auth.username=cbonami -Djib.to.auth.password=$REGISTRY_PASSWORD
 env:
   global:
     secure: a0j7CHfcZ0ySCsOwYnOoS4nUS+pORE3StI0kEAgoK9FqSPExu/lRy/2tMBSRiPRoF3aRlGRFVNWX378dHsum5gcXoUIZQe+XVOWX1nxMpAEa7HgZpAvOv6yps8fnafAj0NK+kK6LSNyRPT6ZlrcJ1WdmuITv/7JZqtPKKbFBxd/dKiXuiIR55Bb9wuuorp/1SLzGvsyipl4AHLHgNNItdFof1SQhdABCub2bkWcdIOsS2vK/MNc5HPwRDiDPp9b6benJc3F8sTMpIvL4MaXtOvA2vFOxd6wwCprwZKGNa7htYVY8fIHb5WYd3l+6yI+fRV0Rh7jHGCflTBRa5cu2HA4JVNKFDAsab6G/XZMyeKbByU8DgDfhLfCxTNiIqQ2LT7nPaEB38z3mwzT9bt/a182+RwYs4EitjAfp4fGaItxu/jp2wnZa9O3U+qe9yoUhKV/hCYMqVDrhU1oiTW4CUkVzZce8ccVjELJpztzipjSH8a8GKN6rCIHHMISikgGAjRjZaS2Dp6yKF9lZsSCSstkYMqVfHu9bDUCyX78GPZhG/eqR4czdxjguBdvP84U16D/1IfdFuLaHrlAb0Ela5VPxNYrm3ZGZpuh9kX2vWJYh9GR8uTKJMExrWB7X0+tV3B9UTRrIcF8G0n2pi+RaInGFlTwaxMsa3YQv8gohzrQ=
