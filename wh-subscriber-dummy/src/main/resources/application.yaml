@@ -20,4 +20,5 @@ management:
         health:
             show-details: "always"
 
-logging.level.be.acerta: DEBUG
+logging:
+    level.be.acerta: DEBUG

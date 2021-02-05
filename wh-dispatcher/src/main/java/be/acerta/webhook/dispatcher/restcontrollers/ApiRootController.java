@@ -33,7 +33,7 @@ public class ApiRootController {
     public ResponseEntity<EmptyResource> root() {
 
         EmptyResource api = EmptyResource.builder().build();
-        api.add(linkTo(methodOn(ApiRootController.class).root()).withSelfRel());
+        //api.add(linkTo(methodOn(ApiRootController.class).root()).withSelfRel());
         api.add(linkTo(methodOn(ApiRootController.class).api()).withRel("main resource api"));
 
         return ResponseEntity.ok(api);

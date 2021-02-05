@@ -20,4 +20,10 @@ management:
 redis:
     url: redis://localhost:6379
     password: bar
-logging.level.be.acerta: DEBUG
+
+logging:
+    file:
+        name: target/app.log
+    level:
+        be.acerta: DEBUG
+        #org.springframework.boot.autoconfigure.logging: DEBUG

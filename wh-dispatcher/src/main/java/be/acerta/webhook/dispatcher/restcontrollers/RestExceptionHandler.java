@@ -17,6 +17,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public String handleNoSuchElementException(HttpServletRequest request, Exception ex) {
         log.info("Exception {} on Request {}", ex.getMessage(), request.getRequestURL());
+        log.debug("Rootcause", ex);
         return ex.getMessage();
     }
 
@@ -25,6 +26,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public String handleIllegalArgumentExceptionn(HttpServletRequest request, Exception ex) {
         log.info("Exception {} on Request {}", ex.getMessage(), request.getRequestURL());
+        log.debug("Rootcause", ex);
         return ex.getMessage();
     }
 
