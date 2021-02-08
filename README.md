@@ -18,7 +18,7 @@ See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
 Username and password for the docker hub registry need to be passed. If you want to change the registry/repository, you can alter 
 
 ```bash
-./mvnw package -Djib.to.auth.username=cbonami -Djib.to.auth.password=<password docker registry>
+mvn package -Djib.to.auth.username=cbonami -Djib.to.auth.password=<password docker registry>
 ```
 
 ## Run app
@@ -47,7 +47,8 @@ Perform some HTTP-request via curl, postman, etc. Lazy people simply use the [HA
 Make sure the app runs. Then:
 
 ```bash
-./mvnw gatling:test -Dsimulation=LoadTest -Dduration=3600
+cd wh-dispatcher
+mvn gatling:test -Dsimulation=LoadTest -Dduration=3600
 ```
 
 # Dummy subscribing webhook application
@@ -76,13 +77,11 @@ Grafana offers a rich set of predefined dashboards. We're going to use the JVM d
 
 ```
 # empty redis db
-redis-cli FLUSHDB
-# when FLUSHDB disabled (https://stackoverflow.com/questions/59111007/redis-err-unknown-command-flushdb), then use:
-redis-cli --raw keys "*:*:*" | xargs redis-cli del
-redis-cli keys "*" | xargs -L1 -I '$' echo '"$"' | xargs redis-cli del
+redis-cli -h redis --raw keys "*:*:*" | xargs redis-cli -h redis del
+redis-cli -h redis keys "*" | xargs -L1 -I '$' echo '"$"' | xargs redis-cli -h redis del
 
 # list all keys
-redis-cli keys "*"
+redis-cli -h redis keys "*"
 ```
 
 

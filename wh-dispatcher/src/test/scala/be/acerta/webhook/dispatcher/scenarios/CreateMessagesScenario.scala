@@ -18,7 +18,7 @@ object CreateMessagesScenario {
   val numPause = java.lang.Long.getLong("pause", 3L)
   val testPause = Duration(numPause, "seconds")
 
-  val body = """{"type":"webhook_v1", "body":"0000000000"}"""
+  val body = """{"type":"SomethingHappenedEvent", "body":"0000000000"}"""
 
 	var randomBody = Iterator.continually(Map("randBody" -> ( body.replace("0000000000", randomStringGenerator.randomString(10)))))
 
@@ -32,7 +32,7 @@ object CreateMessagesScenario {
 			feed(randomBody)
 			.exec(
 				http("post_message")
-					.post("/api/applications/8aec6535-f23d-48f2-b27b-c43ae6b9c906/messages")
+					.post("/api/webhooks/workingWebhookLocal/messages")
 					.headers(headers_post)
 					.body(StringBody( """${randBody}"""))
 					.check(status.is(201))

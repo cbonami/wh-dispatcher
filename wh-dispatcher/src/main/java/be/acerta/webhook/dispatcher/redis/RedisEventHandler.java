@@ -20,7 +20,7 @@ public class RedisEventHandler {
     @EventListener(classes = ApplicationReadyEvent.class)
     @Order
     public void onApplicationReady() {
-        log.info("--- Opstarten Redis message listeners: Application Ready ---");
+        log.info("--- Starting Redis message listeners: Application Ready ---");
         redisMessageListeners.forEach(RedisMessageListener::startListeners);
     }
 }

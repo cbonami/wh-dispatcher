@@ -6,11 +6,15 @@ import io.micrometer.core.aop.CountedAspect;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.MeterBinder;
-import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+// https://www.codeprimers.com/metrics-collection-in-spring-boot-with-micrometer-and-prometheus/
+@Configuration
 public class MetricsConfig {
 
+
+    // https://grafana.com/grafana/dashboards/4701
     // https://github.com/mweirauch/micrometer-jvm-extras
     @Bean
     public MeterBinder processMemoryMetrics() {
@@ -30,15 +34,6 @@ public class MetricsConfig {
         return new TimedAspect(registry);
     }
 
-    /**
-     * Create counter.
-     * 
-     * @return
-     */
-/*
- * @Bean public MeterRegistryCustomizer<MeterRegistry> meterRegistryCustomizer()
- * { return registry -> registry.counter("webhook.call"); }
- */
     /**
      * Enable @Counted annotation.
      */

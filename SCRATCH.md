@@ -3,8 +3,8 @@
 webhook:
 
 {
-  "url": "http://ptsv2.com/t/p10lt-1611758591/post",
-  "name": "workingWebhook",
+  "url": "http://wh-subscriber-dummy:8081/postit",
+  "name": "workingWebhookLocal",
   "pubSub": false,
   "subscribesTo": [
     "string"
@@ -57,6 +57,15 @@ network.proxy.allow_hijacking_localhost  true
 
 
 C:\Users\cbona\dev\wh-dispatcher\target\gatling
+
+
+sum(rate(http_server_requests_seconds_sum{application="$application", instance="$instance", status!~"5.."}[1m]))/sum(rate(http_server_requests_seconds_count{application="$application", instance="$instance", status!~"5.."}[1m]))
+
+sum(rate(acerta_webhook_invocation_seconds_sum{application="$application", instance="$instance", status!~"5.."}[1m]))/sum(rate(acerta_webhook_invocation_seconds_count{application="$application", instance="$instance", status!~"5.."}[1m]))
+
+sum(rate(acerta_webhook_invocation_seconds_sum{application="webhook-dispatcher"}[1m]))/sum(rate(acerta_webhook_invocation_seconds_count{application="webhook-dispatcher"}[1m]))
+
+max(acerta_webhook_invocation_seconds_max{application="webhook-dispatcher"})
 
 ## Useful Resources
 

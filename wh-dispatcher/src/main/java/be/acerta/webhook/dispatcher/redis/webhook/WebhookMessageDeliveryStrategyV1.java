@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import be.acerta.webhook.dispatcher.redis.MessageDeliveryType;
 import be.acerta.webhook.dispatcher.redis.MessageProcessingStrategy;
+import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +36,7 @@ public class WebhookMessageDeliveryStrategyV1 implements MessageProcessingStrate
     }
 
     @Override
+    @Timed("acerta.webhook.invocation")
     // @Transactional
     public void processMessage(String message) {
         log.debug("processMessage - {} \n", message);
