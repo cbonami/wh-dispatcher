@@ -17,7 +17,12 @@ management:
             exposure:
                 include: "*"
     endpoint:
+        info:
+            enabled: true
+        prometheus:
+            enabled: true 
         health:
+            enabled: true
             show-details: "always"
 
 logging:

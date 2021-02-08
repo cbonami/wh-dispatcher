@@ -87,4 +87,5 @@ C:\Users\cbona\dev\wh-dispatcher\target\gatling
 * https://www.baeldung.com/jib-dockerizing
 * https://dzone.com/articles/using-spring-data-redis-in-spring-boot-with-custom
 * https://www.concretepage.com/spring-4/spring-data-redis-example
-
+* https://keepgrowing.in/tools/monitoring-spring-boot-projects-with-prometheus/
+* https://www.callicoder.com/spring-boot-actuator-metrics-monitoring-dashboard-prometheus-grafana/

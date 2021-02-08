@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'wh-dispatcher'
+    metrics_path: '/actuator/prometheus'
+#    basic_auth:
+#      username: test
+#      password: test
+    static_configs:
+# https://prometheus.io/docs/guides/multi-target-exporter/
+      - targets: ['app:8080']
+
+          # - wh-dummy-subscriber:8081
+          # - admin-server:9090

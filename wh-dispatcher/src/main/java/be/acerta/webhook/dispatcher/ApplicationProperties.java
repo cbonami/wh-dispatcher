@@ -1,5 +1,6 @@
 package be.acerta.webhook.dispatcher;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
@@ -8,13 +9,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationProperties {
 
-    @Value("${redis.url}")
-    private String redisUrl;
+    @Value("${redis.host}")
+    private String redisHost;
+
+    @Value("${redis.port}")
+    private int redisPort;
+
     @Value("${redis.password}")
     private String redisPassword;
 
     public String getRedisUrl() {
-        return redisUrl;
+        return "redis://" + getRedisHost() + ":" + redisPort;
+    }
+
+    public String getRedisHost() {
+        return StringUtils.trim(redisHost);
+    }
+
+    public int getRedisPort() {
+        return redisPort;
     }
 
     public String getRedisPassword() {

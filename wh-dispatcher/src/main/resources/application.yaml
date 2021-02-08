@@ -18,7 +18,8 @@ management:
             show-details: "always"
 
 redis:
-    url: redis://localhost:6379
+    host: redis
+    port: 6379
     password: bar
 
 logging:
