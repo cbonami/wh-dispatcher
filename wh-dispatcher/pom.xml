@@ -142,6 +142,15 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.mweirauch</groupId>
+            <artifactId>micrometer-jvm-extras</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
