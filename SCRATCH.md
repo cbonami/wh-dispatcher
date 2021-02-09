@@ -5,10 +5,7 @@ webhook:
 {
   "url": "http://wh-subscriber-dummy:8081/postit",
   "name": "workingWebhookLocal",
-  "pubSub": false,
-  "subscribesTo": [
-    "string"
-  ]
+  "pubSub": false
 }
 
 { "url":"http://problem.com", "name":"problematic"}

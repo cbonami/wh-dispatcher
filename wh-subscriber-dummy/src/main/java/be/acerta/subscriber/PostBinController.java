@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class PostBinController {
 
     @RequestMapping(value = "/postit", method = POST)
-    public ResponseEntity<String> persistPerson(@RequestBody String data) {
+    public ResponseEntity<String> postit(@RequestBody String data) {
         log.debug("Received data: {}", data);
         return ResponseEntity.status(ACCEPTED).build();
     }

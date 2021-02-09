@@ -18,7 +18,7 @@ object CreateMessagesScenario {
   val numPause = java.lang.Long.getLong("pause", 3L)
   val testPause = Duration(numPause, "seconds")
 
-  val body = """{"type":"SomethingHappenedEvent", "body":"0000000000"}"""
+  val body = """{"type":"SomethingHappenedEvent", "data":"0000000000"}"""
 
 	var randomBody = Iterator.continually(Map("randBody" -> ( body.replace("0000000000", randomStringGenerator.randomString(10)))))
 
