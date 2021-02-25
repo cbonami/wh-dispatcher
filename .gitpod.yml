@@ -1,6 +1,6 @@
 # start up tasks
 tasks:
-- init: ./mvnw package -DskipTests -f ./wh-dispatcher/pom.xml
+- init: ./mvnw package -Djib.to.auth.username=cbonami -DskipTests -f ./wh-dispatcher/pom.xml
   command: java -jar ./wh-dispatcher/target/*.jar
 
 # exposed ports
