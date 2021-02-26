@@ -8,6 +8,8 @@ webhook:
   "pubSub": false
 }
 
+curl -X POST "http://localhost:8080/api/webhooks" -H  "accept: application/hal+json" -H  "Content-Type: application/json" -d "{\"url\":\"http://wh-subscriber-dummy:8081/postit\",\"name\":\"workingWebhookLocal\",\"pubSub\":false}"
+
 { "url":"http://problem.com", "name":"problematic"}
 
 message:
@@ -16,6 +18,8 @@ message:
   "type": "SomethingHappenedEvent",
   "data": "what the hell happened ?"
 }
+
+curl -X POST "http://localhost:8080/api/webhooks/workingWebhookLocal/messages?bucketId=none" -H  "accept: application/hal+json" -H  "Content-Type: application/json" -d "{\"type\":\"SomethingHappenedEvent\",\"data\":\"what the hell happened ?\"}"
 
 # postbin
 

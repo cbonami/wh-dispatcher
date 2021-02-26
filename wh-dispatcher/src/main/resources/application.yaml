@@ -21,7 +21,7 @@ management:
             application: ${spring.application.name}
 
 redis:
-    host: ${ADMIN_SERVER_HOST:localhost}
+    host: ${REDIS_SERVER_HOST:localhost}
     port: 6379
     password: bar
 
