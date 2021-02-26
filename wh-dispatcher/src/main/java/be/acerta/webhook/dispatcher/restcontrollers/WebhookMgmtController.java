@@ -156,7 +156,7 @@ public class WebhookMgmtController {
         public ResponseEntity<Bucket> getBucket(//
         @PathVariable("whName") String whName,  //
         @PathVariable("bucketId") String bucketId) {
-                return 
+                return
                 /*
                          * if (bstr == null) return ResponseEntity.notFound().<Bucket>build();
                          */
@@ -273,7 +273,7 @@ public class WebhookMgmtController {
         @RequestBody NewMessageDto message,  //
         @RequestParam(value = "bucketId", defaultValue = "none") String bucketId,  //
         @RequestHeader(value = "Content-Type", defaultValue = APPLICATION_JSON_VALUE) String mediaType) {
-                return 
+                return
                 // put json data in an envelope
                 // @fixme apply hmac encryption
                 //
