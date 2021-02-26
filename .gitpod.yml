@@ -1,12 +1,20 @@
 image:
   file: .gitpod.Dockerfile
 
+# List the start up tasks. You can start them in parallel in multiple terminals. See https://www.gitpod.io/docs/config-start-tasks/
+tasks:
+  - command: ./mvnw package -Djib.to.auth.username=$JIB_USER -Djib.to.auth.password=$JIB_PASSWORD -DskipTests -f ./wh-dispatcher/pom.xml && java -jar ./wh-dispatcher/target/*.jar
+    command: redis-server
+    command: gp await-port 8080 && gp preview $(gp url 8080)/browser/browser.html
+
 # List the ports you want to expose and what to do when they are served. See https://www.gitpod.io/docs/config-ports/
 ports:
   - port: 8080
     onOpen: open-preview
+  - port: 6379
+    onOpen: ignore
 
-# List the start up tasks. You can start them in parallel in multiple terminals. See https://www.gitpod.io/docs/config-start-tasks/
-tasks:
-  - init: echo 'init script' # runs during prebuild
-    command: echo 'start script'
+vscode:
+  extensions:
+    - mathiasfrohlich.kotlin@1.7.1:zRxka5i+6/G9r7KC3xmyXQ==
+    - scala-lang.scala@0.5.0:3FIiaU1vnooQsX3PkBlBvQ==
