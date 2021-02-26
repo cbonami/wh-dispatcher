@@ -4,7 +4,7 @@ Spring Boot application that
 - offers an HTTP-API to event-subscribers which they can use to register a webhook (i.e. an endpoint URL in the subscriber's own api)
 - POSTs event-payloads to these hooks as events occur at publisher's end
 
-Events are published on redis, where they are picked up by the dispatcher, which pushes them to the endpoints.
+Events are published on redis, where they are picked up by the dispatcher, which pushes them to the hooks.
 
 ## Build app and push image
 
