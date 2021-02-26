@@ -57,7 +57,7 @@
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
         </dependency>
-		
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -95,7 +95,7 @@
                             <username>${env.REGISTRY_USERNAME}</username>
                             <password>${env.REGISTRY_PASSWORD}</password>
                         </auth> -->
-						<tags>v2</tags>
+						<tags>v3</tags>
 					</to>
 				</configuration>
 				<executions>

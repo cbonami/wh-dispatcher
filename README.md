@@ -4,15 +4,6 @@ Spring Boot application that
 - offers to event-subscribers an HTTP-API where they can register a webhook (i.e. an endpoint URL in the subscriber's api)
 - POSTs event-payloads to these hooks as events occur at publisher's end
 
-## Setup vscode Dev Container
-
-> Note: only works with Visual Studio Code   
-
-Development environment is 100% pre-cooked and standard for all developers. Docker-compose is used to spin up dependencies like redis etc. The development env/container is part of the docker-compose definition, and shares the same container network with the other containers (redis etc). Ports that are opened (by the webapp) are automatically forwarded to the host machine (probably W10).
-
-See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
-
-
 ## Build app and push image
 
 Username and password for the docker hub registry need to be passed. If you want to change the registry/repository, you can alter 
@@ -90,6 +81,16 @@ URL: http://prometheus:9090
 > Note: if you want to access prometheus dashboard straight from your browser, go to [http://localhost:9091](http://localhost:9091). Plz note I've remapped the port to avoid conflict with admin server.
 
 Grafana offers a rich set of predefined dashboards. We're going to use the JVM dashboard. Visit http://localhost:3000/dashboard/import and either upload the configuration saved as a JSON file or paste the dashboard ulr (https://grafana.com/grafana/dashboards/4701).
+
+## Setup vscode Dev Container
+
+> Deprecated -- we are using Gitpod now
+
+> Note: only works with Visual Studio Code   
+
+Development environment is 100% pre-cooked and standard for all developers. Docker-compose is used to spin up dependencies like redis etc. The development env/container is part of the docker-compose definition, and shares the same container network with the other containers (redis etc). Ports that are opened (by the webapp) are automatically forwarded to the host machine (probably W10).
+
+See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
 
 ## Useful commands
 

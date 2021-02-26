@@ -4,7 +4,6 @@
         "javax"
     ],
     "java.configuration.updateBuildConfiguration": "interactive",
-    "files.autoSave": "off",
     "files.watcherExclude": {
         "**/target": true
     },
