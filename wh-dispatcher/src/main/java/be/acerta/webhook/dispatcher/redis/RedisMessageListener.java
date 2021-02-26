@@ -7,22 +7,18 @@ import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toSet;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.redisson.api.RLock;
 import org.redisson.api.map.event.EntryCreatedListener;
 import org.redisson.api.map.event.EntryExpiredListener;
 import org.redisson.api.map.event.EntryUpdatedListener;
 
-@Slf4j
 public abstract class RedisMessageListener {
-
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RedisMessageListener.class);
     private List<MessageProcessingStrategy> processingStrategies;
     private final String id;
     private RedisClient client;
@@ -35,7 +31,6 @@ public abstract class RedisMessageListener {
     }
 
     public void startListeners() {
-
         // processorlock caches (zie producer)
         // listener en lock systeem zit hier
         // groupId is unieke naam voor unieke integratie-stroom die door deze dispatcher
@@ -43,7 +38,6 @@ public abstract class RedisMessageListener {
         log.info("--- Adding listeners for group id {} ---", client.groupId());
         client.getProcessors().addListener((EntryCreatedListener<String, String>) e -> processMessage(e.getKey()));
         client.getProcessors().addListener((EntryUpdatedListener<String, String>) e -> processMessage(e.getKey()));
-
         // 3e cache verantwoordelijk voor retries
         // key = bucket in cache en we zetten daar een expiry op van 2, volgende keer 4,
         // dan 8
@@ -53,7 +47,6 @@ public abstract class RedisMessageListener {
         // op gegeven moment stop je wel met retryen en dan komt het op de watchdog
         // monitor
         client.getAwaitRetries().addListener((EntryExpiredListener<String, Integer>) e -> processRetry(e.getKey()));
-
         log.info("--- Start processing existing keys for group id {} ---", client.groupId());
         client.getBuckets().keySet().forEach(this::processMessage);
     }
@@ -69,22 +62,17 @@ public abstract class RedisMessageListener {
                     messageId.set(firstMessageId);
                     log.debug("Processing message id {} for bucket id {}", firstMessageId, bucketId);
                     determineMessageType(msg).ifPresentOrElse(messageType -> {
-                        log.debug("Determined event type {} for message id {} and bucket id {}", messageType,
-                                firstMessageId, bucketId);
-
+                        log.debug("Determined event type {} for message id {} and bucket id {}", messageType, firstMessageId, bucketId);
                         // strategy pattern om te zien wat er moet gebeuren
                         // messageType bepaalt gekozen strategy
                         determineStrategy(messageType).ifPresentOrElse(messageStrategy -> {
-                            log.debug("Determined message strategy {} for message id {} and bucket id {}",
-                                    messageStrategy, firstMessageId, bucketId);
+                            log.debug("Determined message strategy {} for message id {} and bucket id {}", messageStrategy, firstMessageId, bucketId);
                             messageStrategy.processMessage(msg);
                         }, () -> {
-                            throw new NoSuchElementException(String.format(
-                                    "No strategy could be found for messageType in msg %s", lazy(msg::toString)));
+                            throw new NoSuchElementException(String.format("No strategy could be found for messageType in msg %s", lazy(msg::toString)));
                         });
                     }, () -> {
-                        throw new NoSuchElementException(String.format(
-                                "No known messageType could be distilled from msg %s", lazy(msg::toString)));
+                        throw new NoSuchElementException(String.format("No known messageType could be distilled from msg %s", lazy(msg::toString)));
                     });
                     client.removeMessage(bucketId, msg);
                 } catch (NoSuchElementException ex) {
@@ -135,16 +123,13 @@ public abstract class RedisMessageListener {
             if (!awaitRetryLock.tryLock()) {
                 return;
             }
-
             RLock processorLock = client.getProcessorLock(bucketId);
             try {
                 processorLock.lock();
-
                 String processor = client.getProcessors().get(bucketId);
                 if (processor == null || !processor.equals(UNASSIGNED_KEY)) {
                     return;
                 }
-
                 client.getProcessors().fastPut(bucketId, UNASSIGNED_KEY);
             } finally {
                 if (processorLock.isHeldByCurrentThread()) {
@@ -165,23 +150,18 @@ public abstract class RedisMessageListener {
         RLock awaitRetryLock = client.getAwaitRetryLock(bucketId);
         // semafoor, omdat we vanalles moeten berekenen hieronder
         awaitRetryLock.lock();
-
         // get next retry interval value and increment
         Integer nextRetryInterval = client.getNextRetryIntervals().get(bucketId);
         if (nextRetryInterval == null || nextRetryInterval == 0) {
             nextRetryInterval = NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR;
         }
-        if (log.isErrorEnabled())
-            log.error(format("Processing of message [%s] has failed. Next attempt in %s secs", msg, nextRetryInterval),
-                    ex);
+        if (log.isErrorEnabled()) log.error(format("Processing of message [%s] has failed. Next attempt in %s secs", msg, nextRetryInterval), ex);
         client.getAwaitRetries().fastPut(bucketId, nextRetryInterval, nextRetryInterval, SECONDS);
-
         if (isSmallerThanRedisMaxRetryInterval(nextRetryInterval)) {
             client.getNextRetryIntervals().put(bucketId, nextRetryInterval * NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR);
         } else {
             client.getNextRetryIntervals().put(bucketId, NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR);
         }
-
         // un-assign processor
         client.getProcessors().fastPut(bucketId, UNASSIGNED_KEY);
         return awaitRetryLock;
@@ -198,16 +178,12 @@ public abstract class RedisMessageListener {
     private void unassignExistingListeners() {
         // look for existing listeners and activate
         log.info("--- Unassigning existing listeners on buckets ---");
-        client.getProcessors().entrySet().stream().filter(entry -> !entry.getValue().equals(UNASSIGNED_KEY))
-                .peek(entry -> log.info("--- Found listener to unassign with id {} on bucket {} ", entry.getKey(),
-                        entry.getValue()))
-                .collect(toSet()).iterator().forEachRemaining(entry -> entry.setValue(UNASSIGNED_KEY));
+        client.getProcessors().entrySet().stream().filter(entry -> !entry.getValue().equals(UNASSIGNED_KEY)).peek(entry -> log.info("--- Found listener to unassign with id {} on bucket {} ", entry.getKey(), entry.getValue())).collect(toSet()).iterator().forEachRemaining(entry -> entry.setValue(UNASSIGNED_KEY));
     }
-
 
     private String determineFirstMessageId(String bucketId) {
         Optional<String> message = client.getBuckets().get(bucketId).stream().findFirst();
-        return message.map(m-> new JSONObject(m).get("id").toString()).orElse(null);
+        return message.map(m -> new JSONObject(m).get("id").toString()).orElse(null);
     }
 
     protected abstract Optional<MessageDeliveryType> determineMessageType(String msg);

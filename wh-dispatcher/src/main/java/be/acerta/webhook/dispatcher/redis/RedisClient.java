@@ -2,19 +2,15 @@ package be.acerta.webhook.dispatcher.redis;
 
 import static be.acerta.webhook.dispatcher.LazyString.lazy;
 import static java.util.Objects.isNull;
-
 import java.util.UUID;
-
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.redisson.api.RLock;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RMultimapCache;
 import org.redisson.api.RedissonClient;
 
-@Slf4j
 public abstract class RedisClient {
-
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RedisClient.class);
     public static final String UNASSIGNED_KEY = new UUID(0, 0).toString();
     public static final String PROCESSOR_LOCK_SUFFIX = "processorlock";
     static final String AWAIT_RETRY_SUFFIX = "awaitretry";
@@ -22,7 +18,6 @@ public abstract class RedisClient {
     public static final Integer NEXT_RETRY_INTERVAL_MULTIPLY_FACTOR = 2;
     public static final String LOCK_SUFFIX = "lock";
     public static final String SEPARATOR = "_";
-
     private final RedissonClient client;
 
     protected RedisClient(RedissonClient client) {
@@ -91,8 +86,7 @@ public abstract class RedisClient {
      * @return {@link RLock}
      */
     public RLock getProcessorLock(String bucketId) {
-        return client.getLock(
-                groupId() + SEPARATOR + PROCESSOR_LOCK_SUFFIX + SEPARATOR + LOCK_SUFFIX + SEPARATOR + bucketId);
+        return client.getLock(groupId() + SEPARATOR + PROCESSOR_LOCK_SUFFIX + SEPARATOR + LOCK_SUFFIX + SEPARATOR + bucketId);
     }
 
     /**
@@ -103,8 +97,7 @@ public abstract class RedisClient {
      * @return {@link RLock}
      */
     public RLock getAwaitRetryLock(String bucketId) {
-        return client
-                .getLock(groupId() + SEPARATOR + AWAIT_RETRY_SUFFIX + SEPARATOR + LOCK_SUFFIX + SEPARATOR + bucketId);
+        return client.getLock(groupId() + SEPARATOR + AWAIT_RETRY_SUFFIX + SEPARATOR + LOCK_SUFFIX + SEPARATOR + bucketId);
     }
 
     public static String getMessageId(String message) {
@@ -126,8 +119,7 @@ public abstract class RedisClient {
     }
 
     public boolean hasEventBlockedForProcessing(String bucketId) {
-        return (UNASSIGNED_KEY.equals(getProcessors().get(bucketId)) || isNull(getProcessors().get(bucketId)))
-                && !isProcessorLocked(bucketId) && !getAwaitRetries().containsKey(bucketId);
+        return (UNASSIGNED_KEY.equals(getProcessors().get(bucketId)) || isNull(getProcessors().get(bucketId))) && !isProcessorLocked(bucketId) && !getAwaitRetries().containsKey(bucketId);
     }
 
     public boolean isProcessorLocked(String bucketId) {
@@ -154,13 +146,12 @@ public abstract class RedisClient {
 
     public void removeMessageById(String bucketId, String messageId) {
         log.debug("Verwijder voor event {} uit bucket {}", messageId, bucketId);
-        String eventMessage = getBuckets().getAll(bucketId).stream()
-                .filter(message -> JsonUtil.getFieldAsString(message, "id").equals(messageId)).findFirst().orElse(null);
+        String eventMessage = getBuckets().getAll(bucketId).stream().filter(message -> JsonUtil.getFieldAsString(message, "id").equals(messageId)).findFirst().orElse(null);
         removeMessage(bucketId, eventMessage);
         removeBucketFromCaches(bucketId);
     }
 
-        /**
+    /**
      * Removes a message from a bucket. This method is called when a mesagge is
      * succesfully processed or when a message holds an event that is not relevant
      *
@@ -168,8 +159,7 @@ public abstract class RedisClient {
      * @param message
      */
     public void removeMessage(String bucketId, String message) {
-        log.debug("Removing message {} with message id {} from bucket id {}", message, lazy(() -> getMessageId(message)),
-                bucketId);
+        log.debug("Removing message {} with message id {} from bucket id {}", message, lazy(() -> getMessageId(message)), bucketId);
         getBuckets().remove(bucketId, message);
         if (getBuckets().get(bucketId).isEmpty()) {
             log.debug("Removing empty bucket with id {}", bucketId);

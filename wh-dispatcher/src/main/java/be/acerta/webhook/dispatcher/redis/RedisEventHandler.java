@@ -1,19 +1,15 @@
 package be.acerta.webhook.dispatcher.redis;
 
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 
 @Named
-@Slf4j
 public class RedisEventHandler {
-
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RedisEventHandler.class);
     @Inject
     private List<RedisMessageListener> redisMessageListeners;
 

@@ -1,15 +1,11 @@
 package be.acerta.webhook.dispatcher.redis.webhook;
 
 import static be.acerta.webhook.dispatcher.redis.JsonUtil.jsonToObject;
-
 import java.util.Collections;
-
 import javax.inject.Inject;
-
 import be.acerta.webhook.dispatcher.redis.MessageDeliveryType;
 import be.acerta.webhook.dispatcher.redis.MessageProcessingStrategy;
 import io.micrometer.core.annotation.Timed;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,9 +20,8 @@ import org.springframework.web.client.RestTemplate;
  * 'version 2' might never come, but we keep our options open.
  */
 @Component
-@Slf4j
 public class WebhookMessageDeliveryStrategyV1 implements MessageProcessingStrategy {
-
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(WebhookMessageDeliveryStrategyV1.class);
     @Inject
     private RestTemplate restTemplate;
 
@@ -35,9 +30,9 @@ public class WebhookMessageDeliveryStrategyV1 implements MessageProcessingStrate
         return eventType.equals(getProcessedMessageType());
     }
 
+    // @Transactional
     @Override
     @Timed("acerta.webhook.invocation")
-    // @Transactional
     public void processMessage(String message) {
         log.debug("processMessage - {} \n", message);
         WebhookMessageDto messageDto = jsonToObject(message, WebhookMessageDto.class);
@@ -47,13 +42,11 @@ public class WebhookMessageDeliveryStrategyV1 implements MessageProcessingStrate
         headers.set("MessageType", messageDto.getType());
         // @fixme pass tracingCorrelationId as header (cfr w3c TraceContext)
         HttpEntity<String> entity = new HttpEntity<>(messageDto.getData(), headers);
-        ResponseEntity<String> response = restTemplate.exchange(messageDto.getWebhookUrl(), HttpMethod.POST,
-                entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(messageDto.getWebhookUrl(), HttpMethod.POST, entity, String.class);
         log.debug("Response status = {}", response.getStatusCode());
     }
 
     public MessageDeliveryType getProcessedMessageType() {
         return MessageDeliveryType.WEBHOOK_V1;
     }
-
 }
