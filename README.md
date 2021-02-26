@@ -70,7 +70,7 @@ By means of [docker-compose](.devcontainer/docker-compose.yml) a 'dummy' applica
 
 By means of [docker-compose](.devcontainer/docker-compose.yml) a Spring Boot Admin console is made available on [http://localhost:9090](http://localhost:9090) in the development workbench.
 
-## Monitor
+# Monitor
 
 Point your browser to [http://localhost:3000](http://localhost:3000).
 - User: grafana
@@ -84,7 +84,7 @@ URL: http://prometheus:9090
 
 Grafana offers a rich set of predefined dashboards. We're going to use the JVM dashboard. Visit http://localhost:3000/dashboard/import and either upload the configuration saved as a JSON file or paste the dashboard ulr (https://grafana.com/grafana/dashboards/4701).
 
-## Setup vscode Dev Container
+# Setup vscode Dev Container
 
 > Deprecated -- we are using Gitpod now
 
@@ -94,7 +94,7 @@ Development environment is 100% pre-cooked and standard for all developers. Dock
 
 See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
 
-## Useful commands
+# Useful commands
 
 ```
 # empty redis db
