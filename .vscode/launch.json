@@ -1,11 +1,12 @@
 {
     "configurations": [
+
         {
             "type": "java",
-            "name": "Launch WhSubscriberFakeApplication",
+            "name": "Launch WhSubscriberDummyApplication",
             "request": "launch",
-            "mainClass": "be.acerta.subscriber.WhSubscriberFakeApplication",
-            "projectName": "wh-subscriber-fake"
+            "mainClass": "be.acerta.subscriber.WhSubscriberDummyApplication",
+            "projectName": "wh-subscriber-dummy"
         },
         {
             "type": "java",
@@ -15,16 +16,6 @@
             "console": "internalConsole",
             "mainClass": "be.acerta.webhook.dispatcher.WebhookDispatcherApplication",
             "projectName": "wh-dispatcher",
-            "args": ""
-        },
-        {
-            "type": "java",
-            "name": "Spring Boot-WhSubscriberFakeApplication<wh-admin-server>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "mainClass": "be.acerta.subscriber.WhSubscriberFakeApplication",
-            "projectName": "wh-admin-server",
             "args": ""
         },
         {
