@@ -4,11 +4,11 @@ image:
 # List the start up tasks. You can start them in parallel in multiple terminals. See https://www.gitpod.io/docs/config-start-tasks/
 tasks:
   - command: redis-server
-  - init: mvn package -Djib.to.auth.username=$JIB_USER -Djib.to.auth.password=$JIB_PASSWORD -DskipTests -f ./wh-admin-server/pom.xml
-    command: mvn spring-boot:run -f ./wh-admin-server/pom.xml
-  - init: gp await-port 6379 && ./mvnw package -Djib.to.auth.username=$JIB_USER -Djib.to.auth.password=$JIB_PASSWORD -DskipTests -f ./wh-dispatcher/pom.xml
-    command: mvn spring-boot:run -f ./wh-dispatcher/pom.xml
-    command: gp await-port 8080 && gp preview $(gp url 8080)/browser/browser.html
+  - command: mvn package -Djib.to.auth.username=$JIB_USER -Djib.to.auth.password=$JIB_PASSWORD -DskipTests -f ./wh-admin-server/pom.xml
+  - command: gp await-port 8090 && mvn spring-boot:run -f ./wh-admin-server/pom.xml
+  - command: gp await-port 6379 && ./mvnw package -Djib.to.auth.username=$JIB_USER -Djib.to.auth.password=$JIB_PASSWORD -DskipTests -f ./wh-dispatcher/pom.xml
+  - command: mvn spring-boot:run -f ./wh-dispatcher/pom.xml
+  - command: gp await-port 8080 && gp preview $(gp url 8080)/browser/browser.html
 
 # List the ports you want to expose and what to do when they are served. See https://www.gitpod.io/docs/config-ports/
 ports:
