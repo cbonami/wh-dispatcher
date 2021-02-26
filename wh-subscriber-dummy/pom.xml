@@ -95,9 +95,10 @@
                             <username>${env.REGISTRY_USERNAME}</username>
                             <password>${env.REGISTRY_PASSWORD}</password>
                         </auth> -->
-						<tags>v3</tags>
+						<tags>v4, latest</tags>
 					</to>
-				</configuration>
+                </configuration>
+                <!--
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -105,7 +106,8 @@
 							<goal>build</goal>
 						</goals>
 					</execution>
-				</executions>
+                </executions>
+            -->
 			</plugin>
 		</plugins>
 	</build>

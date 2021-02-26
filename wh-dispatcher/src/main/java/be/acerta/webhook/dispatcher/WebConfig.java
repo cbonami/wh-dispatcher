@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
     /**
      * Supply X-FORWARDED-* HEADERS.
      * Replace the host, port, protocol, etc. with those of the Edge server.
-     * 
+     *
      * @return
      */
     @Bean

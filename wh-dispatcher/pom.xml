@@ -299,6 +299,7 @@
                         <tags>latest</tags>
                     </to>
                 </configuration>
+<!--
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -307,6 +308,7 @@
                         </goals>
                     </execution>
                 </executions>
+            -->
             </plugin>
 
         </plugins>
