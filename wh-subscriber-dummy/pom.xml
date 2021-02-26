@@ -90,7 +90,7 @@
                             <username>${env.REGISTRY_USERNAME}</username>
                             <password>${env.REGISTRY_PASSWORD}</password>
                         </auth> -->
-						<tags>v4, latest</tags>
+						<tags>v3,latest</tags>
 					</to>
                 </configuration>
                 <!--
