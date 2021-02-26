@@ -75,7 +75,6 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
     ports:
-      # remapped port to 9091 because 9090 conflicts with admin-server
       - "9090:9090"
     volumes:
       - ./prometheus/:/etc/prometheus/
