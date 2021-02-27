@@ -17,17 +17,16 @@ mvn package -Djib.to.auth.username=cbonami -Djib.to.auth.password=<password dock
 ## Run app
 
 ```bash
-./start-dispatcher.sh
+mvn spring-boot:run -f ./wh-dispatcher/pom.xml
 ```
 
-> Note: this is what happens:
+By default all dependencies (redis, admin-server, etc) are looked for on 'localhost'. You can use a couple of env variables to change this.
+For example, this script will start the application when it's running inside docker-compose (as is the case with the workbench setup that uses vscode remote development):
 
 ```bash
-# file: start-dispatcher.sh
-export ADMIN_SERVER_PORT=9090
+# file: start-dispatcher-vscode.sh
 export ADMIN_SERVER_HOST=admin-server
 export REDIS_SERVER_HOST=redis
-mvn spring-boot:run -f ./wh-dispatcher/pom.xml
 ```
 
 > Note: LiveReload server is also started for fast development (spring-dev-tools).
