@@ -6,7 +6,7 @@ tasks:
   - command: redis-server
   - command: mvn spring-boot:run -f ./wh-admin-server/pom.xml -ntp
   - command: gp await-port 6379 && gp await-port 8090 && mvn spring-boot:run -f ./wh-dispatcher/pom.xml -ntp && gp await-port 8080 && gp preview $(gp url 8080)/browser/browser.html
-  - command: mvn spring-boot:run -f ./wh-subscriber-dummy/pom.xml -ntp && gp await-port 8080 && gp await-port 8081 && curl -X POST "http://localhost:8080/api/webhooks" -H  "accept: application/hal+json" -H  "Content-Type: application/json" -d "{\"url\":\"http://wh-subscriber-dummy:8081/postit\",\"name\":\"workingWebhookLocal\",\"pubSub\":false}"
+  - command: mvn spring-boot:run -f ./wh-subscriber-dummy/pom.xml -ntp && gp await-port 8080 && gp await-port 8081 && ./create-webhook.sh
   - command: prometheus --config.file=./prometheus/prometheus.yml
 
 # List the ports you want to expose and what to do when they are served. See https://www.gitpod.io/docs/config-ports/
