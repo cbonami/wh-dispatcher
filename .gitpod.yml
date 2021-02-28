@@ -7,9 +7,8 @@ tasks:
 #  - command: mvn package -Djib.to.auth.username=$JIB_USER -Djib.to.auth.password=$JIB_PASSWORD -DskipTests -f ./wh-admin-server/pom.xml
   - command: mvn spring-boot:run -f ./wh-admin-server/pom.xml -ntp
 #  - command: gp await-port 6379 && ./mvnw package -Djib.to.auth.username=$JIB_USER -Djib.to.auth.password=$JIB_PASSWORD -DskipTests -f ./wh-dispatcher/pom.xml
-  - command: gp await-port 6379 && gp await-port 8090 && mvn spring-boot:run -f ./wh-dispatcher/pom.xml -ntp
-  - command: gp await-port 8080 && gp preview $(gp url 8080)/browser/browser.html
-  - command: mvn spring-boot:run -f ./wh-subscriber-dummy/pom.xml -ntp
+  - command: gp await-port 6379 && gp await-port 8090 && mvn spring-boot:run -f ./wh-dispatcher/pom.xml -ntp && gp await-port 8080 && gp preview $(gp url 8080)/browser/browser.html
+  - command: mvn spring-boot:run -f ./wh-subscriber-dummy/pom.xml -ntp && gp await-port 8080 && gp await-port 8081 && curl -X POST "http://localhost:8080/api/webhooks" -H  "accept: application/hal+json" -H  "Content-Type: application/json" -d "{\"url\":\"http://wh-subscriber-dummy:8081/postit\",\"name\":\"workingWebhookLocal\",\"pubSub\":false}"
 
 # List the ports you want to expose and what to do when they are served. See https://www.gitpod.io/docs/config-ports/
 ports:
