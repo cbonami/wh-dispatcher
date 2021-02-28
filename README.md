@@ -73,11 +73,18 @@ mvn gatling:test -Dsimulation=LoadTest -Dduration=3600
 
 # Dummy subscribing webhook application
 
-By means of [docker-compose](.devcontainer/docker-compose.yml) a 'dummy' application exposing an endpoint that we can POST to, is automatically made available on [http://localhost:8081](http://localhost:8081) in the development workbench.
+A 'dummy' application exposing an endpoint that we can POST to, is automatically made available on port 8081 in the development workbench.
 
+```bash
+gp preview $(gp url 8081) 
+```
 # Administer
 
-By means of [docker-compose](.devcontainer/docker-compose.yml) a Spring Boot Admin console is made available on [http://localhost:9090](http://localhost:9090) in the development workbench.
+A Spring Boot Admin console is made available on port 8090 in the development workbench.
+
+```bash
+gp preview $(gp url 8090) 
+```
 
 # Monitor
 

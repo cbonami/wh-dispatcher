@@ -19,6 +19,8 @@ ports:
     onOpen: ignore
   - port: 8081
     onOpen: ignore
+  - port: 9090
+    onOpen: ignore
 
 vscode:
   extensions:
