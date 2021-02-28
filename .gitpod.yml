@@ -3,11 +3,11 @@ image:
 
 # See https://www.gitpod.io/docs/config-start-tasks/
 tasks:
-  - command: redis-server
+  - command: redis-server --daemonize yes && prometheus --config.file=./prometheus/prometheus.yml
   - command: mvn spring-boot:run -f ./wh-admin-server/pom.xml -ntp
-  - command: gp await-port 6379 && gp await-port 8090 && mvn spring-boot:run -f ./wh-dispatcher/pom.xml -ntp && gp await-port 8080 && gp preview $(gp url 8080)/browser/browser.html
-  - command: mvn spring-boot:run -f ./wh-subscriber-dummy/pom.xml -ntp && gp await-port 8080 && gp await-port 8081 && ./create-webhook.sh
-  - command: prometheus --config.file=./prometheus/prometheus.yml
+  - command: gp await-port 6379 && gp await-port 8090 && mvn spring-boot:run -f ./wh-dispatcher/pom.xml -ntp
+  - command: mvn spring-boot:run -f ./wh-subscriber-dummy/pom.xml -ntp
+  - command: gp await-port 8080 && gp await-port 8081 && ./create-webhook.sh
 
 # See https://www.gitpod.io/docs/config-ports/
 ports:
