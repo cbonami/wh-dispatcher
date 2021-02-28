@@ -10,6 +10,11 @@ RUN wget https://github.com/prometheus/prometheus/releases/download/v2.25.0/prom
  && sudo mv prometheus-2.25.0.linux-amd64/consoles prometheus-2.25.0.linux-amd64/console_libraries /etc/prometheus \
  && rm -r prometheus-2.25.0.linux-amd64*
 
+# grafana
+RUN curl https://packages.grafana.com/gpg.key | sudo apt-key add - \
+ && sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main" \
+ && sudo apt-get -y install grafana
+
 # redis
 RUN sudo apt-get update \
  && sudo apt-get install -y redis-server \
