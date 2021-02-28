@@ -33,12 +33,22 @@ export REDIS_SERVER_HOST=redis
 
 Following endpoints are exposed by the application:
 
-* [http://localhost:8080/browser/browser.html](http://localhost:8080/browser/browser.html) -> [HAL Explorer](https://github.com/toedter/hal-explorer); use this to TRAVERSE the api
-* [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) -> Swagger Docs UI
-* [http://localhost:8080/v3/api-docs/](http://localhost:8080/v3/api-docs/) -> Open API 3.0 JSON description.
-* [http://localhost:8080/actuator](http://localhost:8080/actuator) -> Actuator API to inspect and manage the webservice
+```bash
+# HAL Explorer; use this to TRAVERSE the api
+gp preview $(gp url 8080)/browser/browser.html 
 
-[./clear-redis.sh](./clear-redis.sh) can be used to empty the redis database during testing.
+# Swagger Docs UI
+gp preview $(gp url 8080)/swagger-ui.html
+
+# Open API Spec yml file
+gp preview $(gp url 8080)/v3/api-docs/
+
+# Actuator API to inspect and manage the webservice
+gp preview $(gp url 8080)/actuator
+```
+
+* [./clear-redis.sh](./clear-redis.sh) can be used to empty the redis database during testing.
+* [./create-webhook.sh](./create-webhook.sh) creates a webhook that points to endpoint expose by wh-subscriber-dummy service
 
 ## Use app
 
@@ -46,10 +56,10 @@ Perform some HTTP-request via curl, postman, etc. Lazy people simply use the [HA
 
 ```bash
 # create webhook
-curl -X POST "http://localhost:8080/api/webhooks" -H  "accept: application/hal+json" -H  "Content-Type: application/json" -d "{\"url\":\"http://wh-subscriber-dummy:8081/postit\",\"name\":\"someWebhook\",\"pubSub\":false}"
+curl -X POST $(gp url 8080)/api/webhooks -H  "accept: application/hal+json" -H  "Content-Type: application/json" -d "{\"url\":\"$(gp url 8081)/postit\",\"name\":\"someWebhook\",\"pubSub\":false}"
 
 # emulate arriving message
-curl -X POST "http://localhost:8080/api/webhooks/someWebhook/messages?bucketId=none" -H  "accept: application/hal+json" -H  "Content-Type: application/json" -d "{\"type\":\"SomethingHappenedEvent\",\"data\":\"what the hell happened ?\"}"
+curl -X POST $(gp url 8080)/api/webhooks/someWebhook/messages?bucketId=none -H  "accept: application/hal+json" -H  "Content-Type: application/json" -d "{\"type\":\"SomethingHappenedEvent\",\"data\":\"what the hell happened ?\"}"
 ```
 
 ## Load test
@@ -97,11 +107,11 @@ See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
 
 ```
 # empty redis db
-redis-cli -h redis --raw keys "*:*:*" | xargs redis-cli -h redis del
-redis-cli -h redis keys "*" | xargs -L1 -I '$' echo '"$"' | xargs redis-cli -h redis del
+redis-cli -h localhost --raw keys "*:*:*" | xargs redis-cli -h localhost del
+redis-cli -h localhost keys "*" | xargs -L1 -I '$' echo '"$"' | xargs redis-cli -h localhost del
 
 # list all keys
-redis-cli -h redis keys "*"
+redis-cli -h localhost keys "*"
 ```
 
 
