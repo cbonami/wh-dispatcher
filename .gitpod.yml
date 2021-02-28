@@ -1,7 +1,7 @@
 image:
   file: .gitpod.Dockerfile
 
-# List the start up tasks. You can start them in parallel in multiple terminals. See https://www.gitpod.io/docs/config-start-tasks/
+# See https://www.gitpod.io/docs/config-start-tasks/
 tasks:
   - command: redis-server
   - command: mvn spring-boot:run -f ./wh-admin-server/pom.xml -ntp
@@ -9,7 +9,7 @@ tasks:
   - command: mvn spring-boot:run -f ./wh-subscriber-dummy/pom.xml -ntp && gp await-port 8080 && gp await-port 8081 && ./create-webhook.sh
   - command: prometheus --config.file=./prometheus/prometheus.yml
 
-# List the ports you want to expose and what to do when they are served. See https://www.gitpod.io/docs/config-ports/
+# See https://www.gitpod.io/docs/config-ports/
 ports:
   - port: 8080
     onOpen: ignore
