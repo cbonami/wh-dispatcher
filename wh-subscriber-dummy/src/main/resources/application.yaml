@@ -26,4 +26,6 @@ management:
             show-details: "always"
 
 logging:
+    file:
+        name: target/app.log
     level.be.acerta: DEBUG
