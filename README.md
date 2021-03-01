@@ -67,8 +67,7 @@ curl -X POST $(gp url 8080)/api/webhooks/someWebhook/messages?bucketId=none -H  
 Make sure the wh-dispatcher app runs. Then:
 
 ```bash
-cd wh-dispatcher
-mvn gatling:test -Dsimulation=LoadTest -Dduration=3600
+mvn gatling:test -Dsimulation=LoadTest -Dduration=3600 -f ./wh-dispatcher/pom.xml
 ```
 
 # Dummy subscribing webhook application

@@ -30,4 +30,7 @@ logging:
         name: target/app.log
     level:
         be.acerta: DEBUG
+        be.acerta.webhook.dispatcher.redis.RedisMessageListener: INFO
+        be.acerta.webhook.dispatcher.redis.RedisProcessor: INFO
+
         #org.springframework.boot.autoconfigure.logging: DEBUG

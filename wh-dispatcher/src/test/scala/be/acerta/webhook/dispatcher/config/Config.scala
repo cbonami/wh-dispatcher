@@ -11,5 +11,5 @@ object Config {
   val duration = System.getProperty("duration").toInt
   val numPause = java.lang.Long.getLong("pause", 3L)
   val testPause = Duration(numPause, "seconds")
-  
+
 }

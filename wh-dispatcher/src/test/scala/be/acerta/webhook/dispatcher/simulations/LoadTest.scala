@@ -17,9 +17,9 @@ class LoadTest extends Simulation {
 		.acceptEncodingHeader("gzip, deflate")
 		.acceptLanguageHeader("en-US,en;q=0.5")
 		.userAgentHeader("curl/7.54.0")
-	
+
   private val createMessagesScenario = CreateMessagesScenario.createMessagesScenario
 
   setUp(createMessagesScenario.inject(atOnceUsers(1))).protocols(httpProtocol)
-  
+
 }
