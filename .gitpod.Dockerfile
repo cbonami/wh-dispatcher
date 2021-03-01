@@ -11,9 +11,14 @@ RUN wget https://github.com/prometheus/prometheus/releases/download/v2.25.0/prom
  && rm -r prometheus-2.25.0.linux-amd64*
 
 # grafana
+RUN mkdir /tmp
+COPY ./grafana/install-plugins.sh /tmp/
 RUN curl https://packages.grafana.com/gpg.key | sudo apt-key add - \
  && sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main" \
- && sudo apt-get -y install grafana
+ && sudo apt-get -y install grafana \
+ && sudo chmod +x /tmp/install-plugins.sh \
+ && sudo sh /tmp/install-plugins.sh \
+ && sudo rm -Rf /tmp
 
 # redis
 RUN sudo apt-get update \
