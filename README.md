@@ -70,6 +70,12 @@ Make sure the wh-dispatcher app runs. Then:
 mvn gatling:test -Dsimulation=LoadTest -Dduration=3600 -f ./wh-dispatcher/pom.xml
 ```
 
+# redis
+
+Redis is pre-installed ànd started as a daemon when the workbench starts. Internally, it runs on port 6379. It's also exposed to the outside world.
+
+`redis-cli` is also pre-installed and ready to use.
+
 # Dummy subscribing webhook application
 
 A 'dummy' application exposing an endpoint that we can POST to, is automatically made available on port 8081 in the development workbench.
@@ -85,17 +91,30 @@ A Spring Boot Admin console is made available on port 8090 in the development wo
 gp preview $(gp url 8090) 
 ```
 
+You can also use the admin server to inspects logs (or change log levels) of both the dispatcher and the dummy subscriber service.
+
 # Monitor
 
-Point your browser to [http://localhost:3000](http://localhost:3000).
-- User: grafana
-- Password: grafana
+Grafana is pre-installed in the workbench. You can start it as follows:
 
-Configure the prometheus datasource on [http://localhost:3000/datasources](http://localhost:3000/datasources). 
+```bash
+sudo ./grafana/start-grafana.sh
+gp preview $(gp url 3000) 
+```
 
-URL: http://prometheus:9090
+Configure the prometheus here:
 
-> Note: if you want to access prometheus dashboard straight from your browser, go to [http://localhost:9090](http://localhost:9090).
+```bash
+sudo ./grafana/start-grafana.sh
+gp preview $(gp url 3000)/datasources 
+```
+
+Prometheus is also pre-installed ànd started when the workbench starts. Normally there is no need to go to its dashboard, as almost everything can be done via Grafana. Neverthless:
+
+```bash
+gp preview $(gp url 9090)
+```
+
 
 Grafana offers a rich set of predefined dashboards. We're going to use the JVM dashboard. Visit http://localhost:3000/dashboard/import and either upload the configuration saved as a JSON file or paste the dashboard ulr (https://grafana.com/grafana/dashboards/4701).
 
