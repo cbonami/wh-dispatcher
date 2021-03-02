@@ -18,6 +18,7 @@ shelved/
 .sts4-cache
 
 ### IntelliJ IDEA ###
+.idea/
 !.idea/codeStyles/codeStyleConfig.xml
 !.idea/codeStyles/Project.xml
 *.iws
