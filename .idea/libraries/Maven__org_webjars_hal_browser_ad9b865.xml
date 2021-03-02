@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.webjars:hal-browser:ad9b865">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/webjars/hal-browser/ad9b865/hal-browser-ad9b865.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/webjars/hal-browser/ad9b865/hal-browser-ad9b865-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/webjars/hal-browser/ad9b865/hal-browser-ad9b865-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="wh-admin-server" />
+        <module name="wh-dispatcher" />
+        <module name="wh-subscriber-dummy" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="wh-admin-server" target="11" />
+      <module name="wh-dispatcher" target="11" />
+      <module name="wh-dispatcher-parent" target="11" />
+      <module name="wh-subscriber-dummy" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="wh-admin-server" options="-parameters" />
+      <module name="wh-dispatcher" options="-parameters" />
+      <module name="wh-subscriber-dummy" options="-parameters" />
+    </option>
+  </component>
+</project>
