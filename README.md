@@ -5,8 +5,26 @@ Spring Boot application that
 - POSTs event-payloads to these hooks as events occur at publisher's end
 
 Events are published on redis, where they are picked up by the dispatcher, which pushes them to the hooks.
+We provided guaranteed, at least-once delivery semantics.
 
 ![](./img/webhookArchitecture.svg)
+
+Redis basically contains a logical Map-like -structure that is observable. Under the hood this logical map is realized by a [Redisson MultiMap](https://redisson.org/glossary/java-multimap.html).
+Each value in the map is a bucket. And a bucket is basically an ordered set of messages that is processed in a strict FIFO manner.
+The key in the multimap is the concatenation '{webhookId}|{logicalBucketId}', where
+- webhookId is the unique name of the webhook endpoint
+- logicalBucketId can be any string; e.g. it could be the id of a customer, which would mean that all messages for customer X go to logical bucket X, and are processed in a strict order. Another option is, for example, using a modulo to determine the bucketId.
+This means that the multimap is a way assign one logical bucket-map to eacht registered webhook.
+It is up to the sender of the message to determine the logicalBucketId that the message belongs to. However, if it is *not* specified, the dispatcher will randomly map it on one of 30 buckets. 
+The number of buckets is configurable, but using multiple buckets allow us to process messages in parallel (n queues/buckets instead of just 1).
+
+The FIFO processing of messages has the following characteristics:
+- a message is never processed before the previous message was processed successfully
+- when a message cannot be processed successfully (because the receiving service timed out or returned a non-202 statuscode), it remains in the bucket, and is retried somewhat later
+- if a message is processed successfully (i.e. the webhook replied 202), the processor immediately processes the next message in the bucket (if any), and so on 
+- there is some kind of exponential backoff policy that drives the retries; but note that in principle the system will keep on retrying indefinitely 
+- retries are not scheduled with quartz or Spring Retry or anything else running inside the JVM; on the contrary, we rely on Redis itself to take care of the scheduling
+- multiple instances of the dispatcher service and/or redis can be deployed, but Redis/Redisson makes sure that only one 'wins' when trying to process a bucket; this means that messages are only processed once (unless they are retried of course)
 
 ## Build app and push image
 
