@@ -6,38 +6,7 @@ Spring Boot application that
 
 Events are published on redis, where they are picked up by the dispatcher, which pushes them to the hooks.
 
-<!--
-
-```
-@startuml webhookArchitecture
-actor UI #red
-SomeService -> redis: connects to
-box "WebhookDispatcher" #lightblue
-    database redis
-    control datagrid #lightgrey
-    redis <--> datagrid
-    control WebhookDispatcher
-end box
-SomeSubscriber -> WebhookDispatcher: Register Webhook (POST)
-UI -> SomeService: POST /api/...
-SomeService -> redis: emit event
-WebhookDispatcher --> datagrid: listen
-datagrid -> WebhookDispatcher: notify event
-WebhookDispatcher -> SomeSubscriber: Send event X1 on bucket 123 (POST)
-datagrid -> WebhookDispatcher: ...
-datagrid -> WebhookDispatcher: ...
-WebhookDispatcher -> SomeSubscriber: Send event Y1 on bucket 456
-WebhookDispatcher -> SomeSubscriber: Send event X2 on bucket 123
-WebhookDispatcher -> SomeSubscriber: Send event Y2 on bucket 123
-WebhookDispatcher -> SomeSubscriber: Send event Z1 on bucket 456
-WebhookDispatcher -> SomeSubscriber: ...
-@enduml
-```
-
--->
-
-![](webhookArchitecture.svg)
-
+![](./img/webhookArchitecture.svg)
 
 ## Build app and push image
 
@@ -161,7 +130,8 @@ Then either upload the configuration saved as a JSON file or paste the dashboard
 # plantuml
 
 ```bash
-java -jar plantuml.jar -Djava.awt.headless=true -tsvg README.md
+cd img
+java -jar ../plantuml.jar -Djava.awt.headless=true -tsvg webhookArchitecture.puml
 ```
 
 This generates an svg file which needs to be committed and pushed to GitHub. More info [here](https://gist.github.com/noamtamim/f11982b28602bd7e604c233fbe9d910f).

@@ -1,0 +1,23 @@
+@startuml webhookArchitecture
+actor UI #red
+SomeService -> redis: connects to
+box "WebhookDispatcher" #lightblue
+    database redis
+    control datagrid #lightgrey
+    redis <--> datagrid
+    control WebhookDispatcher
+end box
+SomeSubscriber -> WebhookDispatcher: Register Webhook (POST)
+UI -> SomeService: POST /api/...
+SomeService -> redis: emit event
+WebhookDispatcher --> datagrid: listen
+datagrid -> WebhookDispatcher: notify event
+WebhookDispatcher -> SomeSubscriber: Send event X1 on bucket 123 (POST)
+datagrid -> WebhookDispatcher: ...
+datagrid -> WebhookDispatcher: ...
+WebhookDispatcher -> SomeSubscriber: Send event Y1 on bucket 456
+WebhookDispatcher -> SomeSubscriber: Send event X2 on bucket 123
+WebhookDispatcher -> SomeSubscriber: Send event Y2 on bucket 123
+WebhookDispatcher -> SomeSubscriber: Send event Z1 on bucket 456
+WebhookDispatcher -> SomeSubscriber: ...
+@enduml
