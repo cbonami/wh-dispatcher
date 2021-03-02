@@ -6,6 +6,22 @@ Spring Boot application that
 
 Events are published on redis, where they are picked up by the dispatcher, which pushes them to the hooks.
 
+<div hidden>
+
+```
+@startuml webhookArchitecture
+
+Alice -> Bob: Hello
+Bob -> Alice: Hi!
+		
+@enduml
+```
+
+</div>
+
+![](webhookArchitecture.svg)
+
+
 ## Build app and push image
 
 Username and password for the docker hub registry need to be passed. If you want to change the registry/repository, you can alter 
