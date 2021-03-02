@@ -130,7 +130,7 @@ See [WSL2_DEV_ENV.md](./WSL2_DEV_ENV.md) for instructions.
 
 # Useful commands
 
-```
+```bash
 # empty redis db
 redis-cli -h localhost --raw keys "*:*:*" | xargs redis-cli -h localhost del
 redis-cli -h localhost keys "*" | xargs -L1 -I '$' echo '"$"' | xargs redis-cli -h localhost del

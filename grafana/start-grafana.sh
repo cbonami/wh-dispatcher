@@ -7,6 +7,8 @@ GF_PATHS_PLUGINS="/var/lib/grafana/plugins"
 GF_PATHS_PROVISIONING="/etc/grafana/provisioning"
 GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel
 
+cp /workspace/wh-dispatcher/grafana/datasources.yaml $GF_PATHS_PROVISIONING/datasources/
+
 exec grafana-server --homepath="$GF_PATHS_HOME" --config="$GF_PATHS_CONFIG" \
   cfg:default.log.mode="console"                            \
   cfg:default.paths.data="$GF_PATHS_DATA"                   \
