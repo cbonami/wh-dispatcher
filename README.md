@@ -27,6 +27,7 @@ The FIFO processing of messages has the following characteristics:
 - multiple instances of the dispatcher service and/or redis can be deployed, but Redis/Redisson makes sure that only one 'wins' when trying to process a bucket; this means that messages are only processed once (unless they are retried of course)
 
 We also provide a REST/HATEOAS API that can be used to 
+- register webhooks in the dispatcher; plz note that this information is also stored in redis (via Spring Data Redis)
 - inspect the buckets and messages that are in flight
 - execute simple administrative tasks like flushing buckets etc
 - put messages on redis during testing
