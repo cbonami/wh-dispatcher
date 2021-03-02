@@ -125,6 +125,14 @@ Then either upload the configuration saved as a JSON file or paste the dashboard
 
 > Note: /var/log/grafana/grafana.log can be a useful source of information
 
+# plantuml
+
+```bash
+java -jar plantuml.jar -Djava.awt.headless=true -tsvg README.md
+```
+
+This generates an svg file which needs to be committed and pushed to GitHub. More info [here](https://gist.github.com/noamtamim/f11982b28602bd7e604c233fbe9d910f).
+
 # Setup vscode Dev Container
 
 > Deprecated -- we are using Gitpod now

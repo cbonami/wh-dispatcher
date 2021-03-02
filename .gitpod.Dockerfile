@@ -18,7 +18,7 @@ RUN curl https://packages.grafana.com/gpg.key | sudo apt-key add - \
  && sudo chmod +x ./install-plugins.sh \
  && sudo sh ./install-plugins.sh
 
-# redis
+# redis, ...
 RUN sudo apt-get update \
  && sudo apt-get install -y redis-server \
  && sudo apt-get -y install --no-install-recommends redis-tools \
