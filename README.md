@@ -19,7 +19,7 @@ It is up to the sender of the message to determine the logicalBucketId that the 
 The number of buckets is configurable, but using multiple buckets allow us to process messages in parallel (n queues/buckets instead of just 1).
 
 The FIFO processing of messages has the following characteristics:
-- a message is never processed before the previous message was processed successfully
+- a message is never processed before the previous message (in the same bucket, that is) was processed successfully
 - when a message cannot be processed successfully (because the receiving service timed out or returned a non-202 statuscode), it remains in the bucket, and is retried somewhat later
 - if a message is processed successfully (i.e. the webhook replied 202), the processor immediately processes the next message in the bucket (if any), and so on 
 - there is some kind of exponential backoff policy that drives the retries; but note that in principle the system will keep on retrying indefinitely 
@@ -40,14 +40,14 @@ mvn package -Djib.to.auth.username=cbonami -Djib.to.auth.password=<password dock
 mvn spring-boot:run -f ./wh-dispatcher/pom.xml
 ```
 
-By default all dependencies (redis, admin-server, etc) are looked for on 'localhost'. You can use a couple of env variables to change this.
-For example, this script will start the application when it's running inside docker-compose (as is the case with the workbench setup that uses vscode remote development):
-
+By default all dependencies (redis, admin-server, etc) are looked for on 'localhost'. You can use a couple of env variables to change this:
 ```bash
-# file: start-dispatcher-vscode.sh
 export ADMIN_SERVER_HOST=admin-server
+export ADMIN_SERVER_PORT=8090
 export REDIS_SERVER_HOST=redis
+export REDIS_SERVER_PORT=6379
 ```
+This will of course be needed when running the dispatcher service in Kubernetes.
 
 > Note: LiveReload server is also started for fast development (spring-dev-tools).
 
