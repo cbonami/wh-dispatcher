@@ -52,7 +52,7 @@ gp preview $(gp url 8080)/actuator
 
 ## Use app
 
-Perform some HTTP-request via curl, postman, etc. Lazy people simply use the [HAL Explorer](http://localhost:8080/browser/browser.html) or the [Swagger UI](). 
+Perform some HTTP-request via curl, postman, etc. Lazy people simply use the included [HAL Explorer](https://github.com/toedter/hal-explorer) or the Swagger Docs UI. 
 
 ```bash
 # create webhook
@@ -83,9 +83,9 @@ A 'dummy' application exposing an endpoint that we can POST to, is automatically
 ```bash
 gp preview $(gp url 8081) 
 ```
-# Administer
+# Administer 
 
-A Spring Boot Admin console is made available on port 8090 in the development workbench.
+A [Spring Boot Admin UI](https://github.com/codecentric/spring-boot-admin) is made available on port 8090 in the development workbench.
 
 ```bash
 gp preview $(gp url 8090) 
@@ -115,14 +115,21 @@ Prometheus is also pre-installed ànd started when the workbench starts. Normall
 gp preview $(gp url 9090)
 ```
 
+Grafana offers a rich set of predefined dashboards. We're going to import the JVM dashboard :
 
-Grafana offers a rich set of predefined dashboards. We're going to use the JVM dashboard. Visit http://localhost:3000/dashboard/import and either upload the configuration saved as a JSON file or paste the dashboard ulr (https://grafana.com/grafana/dashboards/4701).
+```bash
+gp preview $(gp url 3000)/dashboard/import
+```
+
+Then either upload the configuration saved as a JSON file or paste the dashboard url (https://grafana.com/grafana/dashboards/4701).
+
+> Note: /var/log/grafana/grafana.log can be a useful source of information
 
 # Setup vscode Dev Container
 
 > Deprecated -- we are using Gitpod now
 
-> Note: only works with Visual Studio Code   
+> Relies on Visual Studio Code (vscode)  
 
 Development environment is 100% pre-cooked and standard for all developers. Docker-compose is used to spin up dependencies like redis etc. The development env/container is part of the docker-compose definition, and shares the same container network with the other containers (redis etc). Ports that are opened (by the webapp) are automatically forwarded to the host machine (probably W10).
 
