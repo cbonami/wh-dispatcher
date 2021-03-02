@@ -6,7 +6,7 @@ Spring Boot application that
 
 Events are published on redis, where they are picked up by the dispatcher, which pushes them to the hooks.
 
-<div hidden>
+<!--
 
 ```
 @startuml webhookArchitecture
@@ -16,7 +16,7 @@ Bob -> Alice: Hi!
 @enduml
 ```
 
-</div>
+-->
 
 ![](webhookArchitecture.svg)
 
