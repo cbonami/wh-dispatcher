@@ -9,14 +9,14 @@ We provided guaranteed, at least-once delivery semantics.
 
 ![](./img/webhookArchitecture.svg)
 
-Redis basically contains a logical Map-like -structure that is observable. Under the hood this logical map is realized by a [Redisson MultiMap](https://redisson.org/glossary/java-multimap.html).
+Redis basically contains a logical Map-like structure that is observable. Under the hood this logical map is realized by a [Redisson MultiMap](https://redisson.org/glossary/java-multimap.html).
 Each value in the map is a bucket. And a bucket is basically an ordered set of messages that is processed in a strict FIFO manner.
 The key in the multimap is the concatenation '{webhookId}|{logicalBucketId}', where
 - webhookId is the unique name of the webhook endpoint
 - logicalBucketId can be any string; e.g. it could be the id of a customer, which would mean that all messages for customer X go to logical bucket X, and are processed in a strict order. Another option is, for example, using a modulo to determine the bucketId.
-This means that the multimap is a way assign one logical bucket-map to eacht registered webhook.
-It is up to the sender of the message to determine the logicalBucketId that the message belongs to. However, if it is *not* specified, the dispatcher will randomly map it on one of 30 buckets. 
-The number of buckets is configurable, but using multiple buckets allow us to process messages in parallel (n queues/buckets instead of just 1).
+This means that the multimap is a way to assign one logical bucket-map to each registered webhook.
+It is in the first place up to the sender of the message to determine the logicalBucketId that the message belongs to. However, if it is *not* specified, the dispatcher will randomly map it on one of 30 buckets. 
+The number of buckets (30 by default) is configurable, but the idea behind using multiple buckets is to allow us to process messages via parallel work stealing queues (n queues/buckets instead of just 1). Problems while processing a particular bucket should not hinder or even stop processing of other messages belonging to other buckets.
 
 The FIFO processing of messages has the following characteristics:
 - a message is never processed before the previous message (in the same bucket, that is) was processed successfully
@@ -25,6 +25,11 @@ The FIFO processing of messages has the following characteristics:
 - there is some kind of exponential backoff policy that drives the retries; but note that in principle the system will keep on retrying indefinitely 
 - retries are not scheduled with quartz or Spring Retry or anything else running inside the JVM; on the contrary, we rely on Redis itself to take care of the scheduling
 - multiple instances of the dispatcher service and/or redis can be deployed, but Redis/Redisson makes sure that only one 'wins' when trying to process a bucket; this means that messages are only processed once (unless they are retried of course)
+
+We also provide a REST/HATEOAS API that can be used to 
+- inspect the buckets and messages that are in flight
+- execute simple administrative tasks like flushing buckets etc
+- put messages on redis during testing
 
 ## Build app and push image
 
