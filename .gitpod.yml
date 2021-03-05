@@ -5,7 +5,7 @@ image:
 tasks:
   - command: redis-server --daemonize yes && prometheus --config.file=./prometheus/prometheus.yml
   - command: mvn spring-boot:run -f ./wh-admin-server/pom.xml -ntp
-  - command: gp await-port 6379 && gp await-port 8090 && gp await-port 8081 && ./clear-redis.sh && mvn spring-boot:run -f ./wh-dispatcher/pom.xml -ntp
+  - command: gp await-port 6379 && gp await-port 8090 && gp await-port 8081 && ./clear-redis.sh && sleep 2 && mvn package spring-boot:run -f ./wh-dispatcher/pom.xml -ntp
   - command: mvn spring-boot:run -f ./wh-subscriber-dummy/pom.xml -ntp
   - command: gp await-port 8080 && gp await-port 8081 && ./create-webhook.sh && exit
 
