@@ -10,7 +10,9 @@ We provided guaranteed, at least-once delivery semantics.
 ![](./img/webhookArchitecture.svg)
 
 Redis basically contains a logical Map-like structure that is observable. Under the hood this logical map is realized by a [Redisson MultiMap](https://redisson.org/glossary/java-multimap.html).
-Each value in the map is a bucket. And a bucket is basically an ordered set of messages that is processed in a strict FIFO manner.
+Each value in the logical map (basically a Map<String,List>) is a 'bucket'. And a bucket is essentially a small queue, i.e. a list of messages that is processed in a strict FIFO manner. 
+The Map<String,List> is unfolded as a redisson RMultiMap<String,String> where each value is a JSON-envelope around a single message and some metadata.  The reason behind this unfolding is ensuring observability: a new message in a bucket translates to an entry in the map being added, which is an operation that fires a redis-event.
+
 The key in the multimap is the concatenation '{webhookId}|{logicalBucketId}', where
 - webhookId is the unique name of the webhook endpoint
 - logicalBucketId can be any string; e.g. it could be the id of a customer, which would mean that all messages for customer X go to logical bucket X, and are processed in a strict order. Another option is, for example, using a modulo to determine the bucketId.
