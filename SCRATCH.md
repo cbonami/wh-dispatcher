@@ -100,3 +100,4 @@ max(acerta_webhook_invocation_seconds_max{application="webhook-dispatcher"})
 * https://keepgrowing.in/tools/monitoring-spring-boot-projects-with-prometheus/
 * https://www.callicoder.com/spring-boot-actuator-metrics-monitoring-dashboard-prometheus-grafana/
 * https://real-world-plantuml.com/
+* https://blog.knoldus.com/tired-off-creating-grafana-dashboards-manually-lets-automate-it/

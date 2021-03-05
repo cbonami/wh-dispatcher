@@ -134,6 +134,10 @@ Configure the prometheus here:
 
 ```bash
 sudo ./grafana/start-grafana.sh
+
+# provision webhook-related dashboards
+./grafana/create-dashboards.sh
+
 gp preview $(gp url 3000)/datasources 
 ```
 
