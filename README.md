@@ -5,11 +5,13 @@ Spring Boot application that
 - POSTs event-payloads to these hooks as events occur at publisher's end
 
 Events are published on redis, where they are picked up by the dispatcher, which pushes them to the hooks.
-We provided guaranteed, at least-once delivery semantics.
+We guarantee at least-once delivery semantics.
 
 ![](./img/webhookArchitecture.svg)
 
-Redis basically contains a logical Map-like structure that is observable. Under the hood this logical map is realized by a [Redisson MultiMap](https://redisson.org/glossary/java-multimap.html).
+How does this work? 
+
+Per webhook, Redis basically harbors a logical Map-like structure that is observable. Under the hood this logical map is realized by a [Redisson MultiMap](https://redisson.org/glossary/java-multimap.html).
 Each value in the logical map (basically a Map<String,List>) is a 'bucket'. And a bucket is essentially a small queue, i.e. a list of messages that is processed in a strict FIFO manner. 
 The Map<String,List> is unfolded as a redisson RMultiMap<String,String> where each value is a JSON-envelope around a single message and some metadata.  The reason behind this unfolding is ensuring observability: a new message in a bucket translates to an entry in the map being added, which is an operation that fires a redis-event.
 
