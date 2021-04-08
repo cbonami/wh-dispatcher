@@ -36,6 +36,12 @@ We also provide a REST/HATEOAS API that can be used to
 - execute simple administrative tasks like flushing buckets etc
 - put messages on redis during testing
 
+## Todo's
+
+- integrate OpenAPI 3.1 Callback/Webhook spec : https://github.com/OAI/OpenAPI-Specification/blob/master/examples/v3.1/webhook-example.yaml
+- security (HMAC ?)
+- finish pubsub mechanism where _multiple_ subscribers can subscribe to eventTypes; implementation lies on top of current 1:1 queuing mechanism
+
 ## Build app and push image
 
 Username and password for the docker hub registry need to be passed. If you want to change the registry/repository, you can alter 
